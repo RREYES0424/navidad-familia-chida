@@ -1,0 +1,5 @@
+build/
+node_modules/
+*.raw.wav
+.DS_Store
+__pycache__/

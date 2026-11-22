@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El Gran Robo de Navidad</title>
+<meta name="description" content="Búsqueda del tesoro navideña: recupera los regalos que robó el duende Tilín.">
+<meta name="theme-color" content="#0b1a3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Robo de Navidad">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="img/icono-192.png">
+<link rel="apple-touch-icon" href="img/icono-180.png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<canvas id="nieve" aria-hidden="true"></canvas>
+<header id="barra">
+  <button id="btn-atras" class="icon-btn" aria-label="Regresar" hidden>←</button>
+  <a href="#/" id="marca"><span class="marca-tilin" aria-hidden="true"></span><span class="marca-texto">El Gran Robo<br><small>de Navidad</small></span></a>
+  <button id="btn-sonido" class="icon-btn" aria-label="Sonido">🔊</button>
+</header>
+<main id="app" tabindex="-1"></main>
+<div id="capas"></div>
+<script src="js/data.js"></script>
+<script src="js/personajes.js"></script>
+<script src="js/vendor/qrcode.js"></script>
+<script src="js/vendor/jsQR.js" defer></script>
+<script src="js/app.js"></script>
+<script src="js/imprimir.js"></script>
+<script>
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
