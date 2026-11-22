@@ -403,3 +403,33 @@ body.modo-imprimir main { max-width: none; padding: 0 0 40px; }
   .hoja.flujo { padding: 0; min-height: 0; width: auto; }
   .hoja:last-child { page-break-after: auto; break-after: auto; }
 }
+
+/* ---------- Descifradora / Reto Experto ---------- */
+.experto-btn { width: 100%; margin-bottom: 12px; background: linear-gradient(90deg, #1b998b, #22b5a5); border-color: #7ee8d8; }
+.experto-btn small, .agente-btn small { font-weight: 700; opacity: .85; }
+.experto-btn:disabled { opacity: .6; }
+.pergamino.experto { border: 4px solid #1b998b; }
+.pergamino.experto .sobre-titulo { color: #14786d; }
+.experto-listo { text-align: center; font-weight: 900; color: #7ee8d8; margin: 0 0 12px; }
+.fila-botones { display: flex; gap: 8px; flex-wrap: wrap; }
+.modal-descifradora { background: linear-gradient(#e8f7ee, #bfeee6); }
+.modal-descifradora h2 { color: #14786d; }
+
+/* ---------- gafetes ---------- */
+.gafetes { display: flex; justify-content: center; gap: 14mm; }
+.gafete { position: relative; width: 72mm; height: 108mm; border: 2px dashed #888; border-radius: 5mm; overflow: hidden; background: #fffaf0; display: flex; flex-direction: column; align-items: center; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.gf-ranura { width: 16mm; height: 3.5mm; border-radius: 2mm; border: 1.5px solid #555; background: #fff; margin: 3mm 0 0; position: relative; z-index: 2; }
+.gf-banda { position: absolute; top: 0; left: 0; right: 0; height: 30mm; background: var(--fam); }
+.gf-titulo { position: relative; z-index: 1; color: #fff; font: 900 9pt Nunito, sans-serif; letter-spacing: .12em; text-transform: uppercase; margin-top: 2.5mm; }
+.gf-cargo { position: relative; z-index: 1; color: #fff; font: 700 17pt/1 Mountains, serif; margin-top: 1mm; }
+.gf-foto { position: relative; z-index: 1; width: 30mm; height: 34mm; margin-top: 3mm; border: 3px solid #fff; border-radius: 3mm; background: #f0ece2; display: grid; place-items: center; font-size: 8pt; color: #999; box-shadow: 0 0 0 1.5px var(--fam); }
+.gf-nombre { font: 900 21pt/1.05 Nunito, sans-serif; color: var(--tinta); margin-top: 3mm; }
+.gf-familia { font-size: 9pt; color: var(--tinta2); }
+.gf-pie { margin-top: auto; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 4mm 3mm; font-size: 7.5pt; color: var(--tinta2); text-align: left; }
+.gf-pie .qr { width: 15mm; }
+.gf-emblema { position: absolute; right: 3mm; top: 31mm; width: 13mm; }
+.fila-medallas { display: flex; justify-content: center; align-items: center; gap: 8mm; }
+.medalla.verde { background: radial-gradient(#e8f7ee, #5ee0cf 60%, #14786d); }
+.carta-gaby .cs-sello { background: #1b998b; box-shadow: 0 0 0 3px #14786d; }
+.carta-gaby h1 { color: #14786d !important; }
+.imp-glifos { background: #fff; margin: 2mm 0 3mm; }

@@ -44,7 +44,10 @@ INTRO = [
     ("agente", 0.6, [
         ("N", "Pero Tilín no sabía algo muy importante. Santa ya había nombrado a una Agente Especial para proteger la Navidad en esta casa: ¡Ana Sofía!"),
         ("N", "Ella guarda la Llave Dorada: la única que puede abrir el último candado del cofre."),
-    ], 1.2, 0),
+    ], 1.0, 0),
+    ("gaby", 0.5, [
+        ("N", "Y como a Tilín le encantan los mensajes secretos, Santa también nombró a una Descifradora Oficial: ¡Gaby! No hay código, cifrado ni acertijo que se le resista."),
+    ], 1.4, 0),
     ("mision", 0.4, [
         ("N", "Familias: la misión comienza ahora. Abran su sobre de misión, escaneen el código con la app… y no se dejen engañar por el duende."),
         ("N", "¡Recuperen la Navidad!"),
@@ -53,7 +56,7 @@ INTRO = [
 
 FINAL = [
     ("abierto", 1.5, [
-        ("N", "¡Lo lograron! Todas las familias abrieron sus candados, y la Agente Especial Ana Sofía abrió el último con la Llave Dorada."),
+        ("N", "¡Lo lograron! Con la ayuda de Gaby, la Descifradora Oficial, ningún código de Tilín quedó sin resolver. Todas las familias abrieron sus candados, y la Agente Especial Ana Sofía abrió el último con la Llave Dorada."),
     ], 1.0, 0),
     ("triste", 0.5, [
         ("T", "Está bien, está bien… me ganaron. ¿Saben por qué me robé los regalos? Porque yo nunca había pasado una Navidad en familia."),
@@ -76,6 +79,10 @@ CLIPS = {
                          "Cuídala mucho y no se la des a nadie, ni siquiera a Tilín si te la pide. "
                          "Ayuda a tu familia a encontrar las pistas, y cuando todos los candados estén abiertos, tú abrirás el último. "
                          "¡Confío en ti! Con mucho cariño, Santa Claus. ¡Jo, jo, jo!"),
+    "santa-carta-gaby": ("S", "Querida Gaby: soy Santa Claus. El duende Tilín se robó los regalos de tu casa y, como le encantan los mensajes secretos, dejó acertijos y códigos por todas partes. "
+                              "Necesito a alguien muy lista para descifrarlos. Por eso, te nombro Descifradora Oficial de Santa. "
+                              "Tu misión: ayudar a tu familia con los códigos más difíciles, y resolver el Reto Experto que Tilín escondió sólo para ti. "
+                              "¡Confío en tu cerebro! Con cariño, Santa Claus. ¡Jo, jo, jo!"),
     "tilin-trampa": ("T", "¡Je, je, je! ¡Cayeron en mi trampa!"),
     "tilin-pista": ("T", "¡Grrr! ¡Encontraron mi pista!"),
     "tilin-mal": ("T", "¡Ja! ¡Esa respuesta está mal!"),

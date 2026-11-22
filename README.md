@@ -2,15 +2,15 @@
 
 Búsqueda del tesoro navideña para las familias **Reyes Martínez**, **Reyes Flores** y **Alvarado Flores** (y una 4ª familia que se puede activar).
 
-El duende **Tilín**, el más travieso del taller de Santa, se robó los regalos y los encerró en su **Cofre Encantado** con un candado por familia. Cada familia sigue su ruta de pistas con códigos QR, resuelve los acertijos del duende y gana los números de su candado. La **Agente Especial Ana Sofía** guarda la **Llave Dorada**, la única que abre el último candado.
+El duende **Tilín**, el más travieso del taller de Santa, se robó los regalos y los encerró en su **Cofre Encantado** con un candado por familia. Cada familia sigue su ruta de pistas con códigos QR, resuelve los acertijos del duende y gana los números de su candado. La **Agente Especial Ana Sofía** guarda la **Llave Dorada**, la única que abre el último candado, y **Gaby** es la **Descifradora Oficial de Santa**, con un Reto Experto secreto que da a su familia un comodín extra.
 
 ## Qué incluye
 
 | | |
 |---|---|
 | 📱 **App web** (`docs/`) | Funciona en iPhone y Android desde el navegador: historia, escáner de QR, retos, comodines, trampas, regalos sorpresa, kit del detective, misiones con audio para Ana Sofía, video final y panel del organizador. |
-| 🎬 **Videos** (`docs/media/`) | `intro.mp4` (2:15, el robo) y `final.mp4` (0:42, el desenlace). Animación, música y voces originales, con subtítulos. |
-| 🖨️ **Imprimibles** (`imprimibles/`) | Guía del organizador, hoja de respuestas, sobres de misión + kit del detective, tarjetas de pistas, pistas falsas, regalos falsos, cartel del cofre + etiquetas + QR final, carta de Santa y credencial de Ana Sofía, diplomas y cuento ilustrado. Todo en tamaño carta. |
+| 🎬 **Videos** (`docs/media/`) | `intro.mp4` (2:26, el robo) y `final.mp4` (0:47, el desenlace). Animación, música y voces originales, con subtítulos. |
+| 🖨️ **Imprimibles** (`imprimibles/`) | Guía del organizador, hoja de respuestas, sobres de misión + kit del detective, tarjetas de pistas, pistas falsas, regalos falsos, cartel del cofre + etiquetas + QR final, cartas de Santa y gafetes para Ana Sofía y Gaby, medallas, diplomas y cuento ilustrado. Todo en tamaño carta. |
 
 ## Cómo publicar la app (una sola vez)
 

@@ -63,7 +63,7 @@
   function rutaDeFamilia(fam, rutaBase) { const n = rutaBase.length; return rutaBase.map((_, k) => rutaBase[(k + (fam.offset || 0)) % n]); }
   function datosSobre(fam) {
     const c = cfg();
-    return { v: 1, f: fam.id, n: fam.nombre, c: fam.codigo, a: fam.agente || '', r: rutaDeFamilia(fam, c.ruta) };
+    return { v: 1, f: fam.id, n: fam.nombre, c: fam.codigo, a: fam.agente || '', d: fam.descifradora || '', r: rutaDeFamilia(fam, c.ruta) };
   }
   function urlSobre(fam) { return baseUrl() + '#/s/' + b64enc(datosSobre(fam)); }
   function urlCodigo(cod) { return baseUrl() + '#/q/' + cod; }
@@ -78,11 +78,12 @@
     });
     J.regalosFalsos.forEach(g => add(`G|${g.id}`, { tipo: 'regalo', n: g.id }));
     add('COFRE', { tipo: 'cofre' });
-    add('CARTA', { tipo: 'carta' });
+    add('CARTA', { tipo: 'carta', cual: 'agente' });
+    add('CARTA-GABY', { tipo: 'carta', cual: 'descifradora' });
   })();
   const cod = {
     lugar: (f, l) => codigo4(`L|${f}|${l}`), trampa: (f, n) => codigo4(`T|${f}|${n}`),
-    regalo: n => codigo4(`G|${n}`), cofre: () => codigo4('COFRE'), carta: () => codigo4('CARTA')
+    regalo: n => codigo4(`G|${n}`), cofre: () => codigo4('COFRE'), carta: () => codigo4('CARTA'), cartaGaby: () => codigo4('CARTA-GABY')
   };
 
   /* ---------------- estado de la partida (por teléfono) ---------------- */
@@ -91,10 +92,11 @@
   function nuevaPartida(d) {
     const fam = famPorId(d.f) || J.familias[0];
     E = {
-      fam: { id: d.f, n: d.n || fam.nombre, c: String(d.c || fam.codigo), a: d.a || '', r: d.r, idx: J.familias.findIndex(x => x.id === d.f), color: fam.color, icono: fam.icono },
+      fam: { id: d.f, n: d.n || fam.nombre, c: String(d.c || fam.codigo), a: d.a || '', d: d.d || '', r: d.r, idx: J.familias.findIndex(x => x.id === d.f), color: fam.color, icono: fam.icono },
       paso: 0, fase: 'buscando', inicio: Date.now(), fin: null, candado: null,
       comodines: J.comodinesIniciales, usados: 0, ayudas: {}, trampas: [], regalos: [],
-      congelado: 0, castigo: '', estrellas: 0, misiones: [], digitos: [null, null, null, null], fallos: {}
+      congelado: 0, castigo: '', estrellas: 0, misiones: [], digitos: [null, null, null, null], fallos: {},
+      experto: false, verExperto: false, bonoAgente: false
     };
     guarda();
   }
@@ -270,7 +272,15 @@
       <p class="msg-tilin">«${esc(J.mensajesTilin[0].replace('{familia}', E.fam.n))}»</p>
       <p class="firma">— Tilín 🔔</p>`, { botones: [{ txt: '¡Aceptamos el reto!', valor: 1, clase: 'primario' }] });
     if (E.fam.a) await misionAgente(0);
+    if (E.fam.d) await presentaDescifradora();
     ir('#/juego');
+  }
+  async function presentaDescifradora() {
+    await modal(`<div class="placa-agente">🔐</div><p class="sobre-titulo">Descifradora Oficial de Santa</p>
+      <h2>¡${esc(E.fam.d)}!</h2><p>Santa te nombró <b>Descifradora Oficial</b>. Ayuda a tu familia con los códigos más difíciles.</p>
+      <p>Cuando encuentren la <b>pista ${J.pasoRetoExperto}</b>, se abrirá tu <b>Reto Experto</b>: si lo resuelves, tu familia gana <b>1 comodín extra</b> 🔔.</p>
+      <button class="btn audio-btn" data-audio="santa-carta-gaby">🔊 Mensaje de Santa</button>`,
+      { clase: 'modal-descifradora', botones: [{ txt: '¡Lista! 🔐', valor: 1, clase: 'primario' }] });
   }
   function pideTexto(titulo, ph, valor) {
     const p = modal(`<h2>${esc(titulo)}</h2><form id="pide-form"><input class="campo" id="pide-texto" placeholder="${esc(ph)}" value="${esc(valor)}" autocomplete="off"></form>`,
@@ -292,7 +302,26 @@
       <div class="mision-icono">${m.icono}</div><p class="mision-texto">${esc(texto)}</p>
       <button class="btn audio-btn" data-audio="mision-${i}">🔊 Escuchar</button>`,
       { clase: 'modal-agente', botones: [{ txt: 'Después', valor: false }, { txt: '¡Misión cumplida! ⭐', valor: true, clase: 'oro' }] });
-    if (hecho && !E.misiones.includes(i)) { E.misiones.push(i); E.estrellas++; guarda(); sfx.exito(); confeti(); aviso(`⭐ ¡${E.fam.a} ganó una estrella de Agente!`); }
+    if (hecho && !E.misiones.includes(i)) {
+      E.misiones.push(i); E.estrellas++; guarda(); sfx.exito(); confeti(); aviso(`⭐ ¡${E.fam.a} ganó una estrella de Agente!`);
+      if (!E.bonoAgente && E.misiones.length >= J.misionesParaBono) {
+        E.bonoAgente = true; E.comodines++; guarda();
+        await modal(`<div class="placa-agente">⭐🔔</div><h2>¡Bono de la Agente!</h2><p><b>${esc(E.fam.a)}</b> ya cumplió ${J.misionesParaBono} misiones. Santa le regala a su familia <b>1 comodín extra</b>.</p>`, { clase: 'modal-agente', botones: [{ txt: '¡Gracias, Agente! ⭐', valor: 1, clase: 'oro' }] });
+        render();
+      }
+    }
+  }
+
+  /* ---------------- reto experto (descifradora) ---------------- */
+  function tieneExperto() { return !E.fam.a && !!(J.retosExpertos[E.fam.id] || J.retosExpertos.fx); }
+  function retoExperto() { return Object.assign({ id: 'experto-' + E.fam.id }, J.retosExpertos[E.fam.id] || J.retosExpertos.fx); }
+  async function resolverExperto(valor) {
+    const r = retoExperto();
+    if (!respuestaOk(r, valor)) { sfx.error(); vibra(150); aviso('¡Nop! Sigan descifrando 🔐', 'mal'); const inp = $('#resp-experto'); if (inp) { inp.classList.add('sacude'); setTimeout(() => inp.classList.remove('sacude'), 500); } return; }
+    E.experto = true; E.verExperto = false; E.comodines++; guarda(); sfx.exito(); confeti();
+    await modal(`<div class="placa-agente">🔐✅</div><h2>¡Reto Experto resuelto!</h2><p class="explica">${esc(r.explica || '')}</p>
+      <p>${E.fam.d ? `¡Bien hecho, <b>${esc(E.fam.d)}</b>! ` : ''}Su familia gana <b>1 comodín extra</b> 🔔.</p>`, { clase: 'modal-descifradora', botones: [{ txt: '¡Sí! 🎉', valor: 1, clase: 'primario' }] });
+    render();
   }
 
   /* ---------------- procesar un código escaneado ---------------- */
@@ -300,7 +329,7 @@
     const info = CODIGOS[c];
     if (!info) { sfx.error(); aviso(`El código ${c} no existe. Revísenlo bien 🧐`, 'mal'); return ir(E ? '#/juego' : '#/'); }
     if (info.tipo === 'cofre') return ir('#/final');
-    if (info.tipo === 'carta') return cartaSanta();
+    if (info.tipo === 'carta') return cartaSanta(info.cual);
     if (!E) {
       await modal(`${tilinMini('sonrisa')}<h2>¡Primero el Sobre de Misión!</h2><p>Antes de buscar pistas, este teléfono necesita unirse a una familia. Escaneen el código de su <b>Sobre de Misión</b>.</p>`);
       return ir('#/');
@@ -360,9 +389,10 @@
     ir('#/juego');
   }
 
-  async function cartaSanta() {
-    await modal(`<div class="sello-santa">🎅</div><h2>Mensaje de Santa</h2><p>Para la Agente Especial <b>${esc(J.agente)}</b>.</p>
-      <button class="btn oro audio-btn" data-audio="santa-carta">🔊 Escuchar a Santa</button>`, { clase: 'modal-agente', botones: [{ txt: 'Cerrar', valor: 1 }] });
+  async function cartaSanta(cual) {
+    const gaby = cual === 'descifradora';
+    await modal(`<div class="sello-santa">🎅</div><h2>Mensaje de Santa</h2><p>Para la ${gaby ? 'Descifradora Oficial' : 'Agente Especial'} <b>${esc(gaby ? J.descifradora : J.agente)}</b>.</p>
+      <button class="btn oro audio-btn" data-audio="${gaby ? 'santa-carta-gaby' : 'santa-carta'}">🔊 Escuchar a Santa</button>`, { clase: gaby ? 'modal-descifradora' : 'modal-agente', botones: [{ txt: 'Cerrar', valor: 1 }] });
     ir(E ? '#/juego' : '#/');
   }
 
@@ -387,6 +417,7 @@
     let extra = '';
     if (r.tipo === 'morse') extra = `<div class="cifra morse">${morseHTML(r.palabra)}</div><a class="kit-link" href="#/kit/morse">🧰 Abrir la tabla de cascabeles</a>`;
     if (r.tipo === 'cesar') extra = `<div class="cifra">${cesar(r.palabra, r.clave)}</div><a class="kit-link" href="#/kit/rueda">🧰 Abrir la Rueda del Duende</a>`;
+    if (r.tipo === 'doble') extra = `<div class="cifra-glifos">${glifosHTML(cesar(r.palabra, r.clave), 40, '#2b1a10')}</div><a class="kit-link" href="#/kit/alfabeto">🧰 Alfabeto</a> · <a class="kit-link" href="#/kit/rueda">🧰 Rueda del Duende</a>`;
     if (r.tipo === 'simbolos') extra = `<div class="cifra-glifos">${glifosHTML(r.palabra, 46, '#2b1a10')}</div><a class="kit-link" href="#/kit/alfabeto">🧰 Abrir el Alfabeto del Duende</a>`;
     if (r.tipo === 'anagrama') extra = `<div class="cifra">${anagrama(r.palabra, 'reto')}</div>`;
     if (r.tipo === 'espejo') extra = `<div class="cifra espejo">${mayus(r.palabra).split('').reverse().join('')}</div>`;
@@ -439,6 +470,23 @@
   function tilinMini(boca = 'sonrisa', cejas) { return `<div class="tilin-mini">${A.svg(A.tilin({ boca, cejas: cejas || (boca === 'enojo' ? 'enojo' : boca === 'triste' ? 'triste' : 'picaro') }), '0 0 200 320')}</div>`; }
   function iconoFam(f, tam = 34) { return A.svg(A.icono(f.icono, '#fff', 'rgba(0,0,0,.35)'), '0 0 100 100', `width="${tam}" height="${tam}"`); }
 
+  function expertoHTML() {
+    if (!E || congelados() || !tieneExperto()) return '';
+    const quien = E.fam.d ? ` de ${esc(E.fam.d)}` : '';
+    if (E.experto) return `<p class="experto-listo">🔐 Reto Experto${quien}: ¡resuelto! (+1 🔔)</p>`;
+    if (E.paso < J.pasoRetoExperto) return `<button class="btn experto-btn" disabled>🔒 Reto Experto${quien} · se abre en la pista ${J.pasoRetoExperto}</button>`;
+    if (!E.verExperto) return `<button class="btn experto-btn" id="btn-experto">🔐 Reto Experto${quien} <small>(+1 🔔)</small></button>`;
+    const r = retoExperto(), nivel = E.ayudas.X || 0;
+    return `<section class="pergamino experto">
+      <p class="sobre-titulo">🔐 Reto Experto${quien} · ${esc(r.titulo)}</p>
+      ${retoHTML(r)}
+      ${nivel >= 1 ? `<p class="ayuda">🔔 Pista: ${esc(r.pista)}</p>` : ''}
+      ${nivel >= 2 ? `<p class="ayuda">🔔🔔 Respuesta: <b>${esc(r.respuestas[0])}</b></p>` : ''}
+      <form id="form-experto" class="form-reto"><input id="resp-experto" class="campo" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Respuesta"><button class="btn primario">Responder</button></form>
+      <div class="fila-botones"><button class="btn chico" id="btn-experto">Cerrar por ahora</button>${nivel < 2 ? '<button class="btn chico" id="ayuda-experto">🔔 Usar comodín</button>' : ''}</div>
+    </section>`;
+  }
+
   /* ======================= VISTAS ======================= */
   const vistas = {};
   let relojTimer = null;
@@ -483,7 +531,7 @@
     app.innerHTML = `<h1 class="titulo-seccion">¿Qué familia son?</h1>
       <p class="nota">Lo normal es escanear el <b>Sobre de Misión</b>. Si no lo tienen, elijan aquí.</p>
       <div class="lista-familias">${c.familias.filter(f => f.activa).map(f => `
-        <button class="familia-btn" data-id="${f.id}" style="--fam:${f.color}"><span class="fam-icono">${iconoFam(f, 40)}</span><span><b>${esc(f.nombre)}</b><small>Tarjetas color ${esc(f.colorNombre.toLowerCase())}${f.agente ? ' · Agente ' + esc(f.agente) : ''}</small></span></button>`).join('')}
+        <button class="familia-btn" data-id="${f.id}" style="--fam:${f.color}"><span class="fam-icono">${iconoFam(f, 40)}</span><span><b>${esc(f.nombre)}</b><small>Tarjetas color ${esc(f.colorNombre.toLowerCase())}${f.agente ? ' · Agente ' + esc(f.agente) : ''}${f.descifradora ? ' · Descifradora ' + esc(f.descifradora) : ''}</small></span></button>`).join('')}
       </div>
       <button class="btn" id="btn-otra">＋ Activar otra familia</button>`;
     $$('.familia-btn').forEach(b => b.addEventListener('click', () => unirseManual(b.dataset.id)));
@@ -545,7 +593,8 @@
       <div class="progreso" aria-label="Progreso">${Array.from({ length: total }, (_, i) => `<span class="${i < E.paso ? 'hecho' : i === E.paso && !E.fin ? 'actual' : ''}">${i < E.paso ? '✓' : i + 1}</span>`).join('')}</div>
       <div class="fila-candado">${candadoHTML()}<p>Números del candado: <b>${E.digitos.filter(d => d != null).length} de 4</b></p></div>
       ${principal}
-      ${E.fam.a && !congelados() ? `<button class="btn agente-btn" id="btn-mision">⭐ Misión de ${esc(E.fam.a)}</button>` : ''}
+      ${E.fam.a && !congelados() ? `<button class="btn agente-btn" id="btn-mision">⭐ Misión de ${esc(E.fam.a)}${E.bonoAgente ? '' : ` <small>(${Math.min(E.misiones.length, J.misionesParaBono)}/${J.misionesParaBono} para +1 🔔)</small>`}</button>` : ''}
+      ${expertoHTML()}
       <div class="barra-escanear"><button class="btn primario grande" id="btn-escanear" ${congelados() ? 'disabled' : ''}>📷 Escanear tarjeta</button><a class="btn" href="#/kit">🧰</a></div>`;
     const reloj = $('#reloj');
     relojTimer = setInterval(() => {
@@ -566,6 +615,9 @@
       const ok = await modal(`<h2>¿Ya quitaron su candado? 🔓</h2><p>Confirmen sólo si el candado de su color ya está abierto.</p>`, { botones: [{ txt: 'Todavía no', valor: false }, { txt: '¡Sí!', valor: true, clase: 'oro' }] });
       if (ok) { E.candado = Date.now(); guarda(); sfx.exito(); confeti(); render(); }
     });
+    const bx = $('#btn-experto'); if (bx) bx.addEventListener('click', () => { E.verExperto = !E.verExperto; guarda(); render(); });
+    const fx = $('#form-experto'); if (fx) fx.addEventListener('submit', e => { e.preventDefault(); resolverExperto($('#resp-experto').value); });
+    const ax = $('#ayuda-experto'); if (ax) ax.addEventListener('click', () => usarComodin('X', (E.ayudas.X || 0) + 1, (E.ayudas.X || 0) ? 'Les decimos la respuesta.' : 'Les damos una pista.'));
     const bm = $('#btn-mision');
     if (bm) bm.addEventListener('click', () => { const pend = J.misionesAgente.map((_, i) => i).filter(i => i <= E.paso && !E.misiones.includes(i)); misionAgente(pend.length ? pend[0] : Math.min(E.paso, J.misionesAgente.length - 1)); });
   };
@@ -608,7 +660,7 @@
   vistas.final = () => {
     sfx.exito(); confeti();
     const resumen = E ? `<div class="resumen" style="--fam:${E.fam.color}"><h2>Familia ${esc(E.fam.n)}</h2>
-      <ul><li>⏱️ Tiempo: <b>${E.fin ? fmtTiempo(E.fin - E.inicio) : '—'}</b></li><li>🔔 Comodines usados: <b>${E.usados}</b></li><li>🪤 Trampas: <b>${E.trampas.length}</b></li><li>🎁 Regalos sorpresa: <b>${E.regalos.length}</b></li>${E.fam.a ? `<li>⭐ Estrellas de ${esc(E.fam.a)}: <b>${E.estrellas}</b></li>` : ''}</ul></div>` : '';
+      <ul><li>⏱️ Tiempo: <b>${E.fin ? fmtTiempo(E.fin - E.inicio) : '—'}</b></li><li>🔔 Comodines usados: <b>${E.usados}</b></li><li>🪤 Trampas: <b>${E.trampas.length}</b></li><li>🎁 Regalos sorpresa: <b>${E.regalos.length}</b></li>${E.fam.a ? `<li>⭐ Estrellas de ${esc(E.fam.a)}: <b>${E.estrellas}</b></li>` : ''}${E.fam.d || tieneExperto() ? `<li>🔐 Reto Experto${E.fam.d ? ' de ' + esc(E.fam.d) : ''}: <b>${E.experto ? '¡resuelto!' : 'pendiente'}</b></li>` : ''}</ul></div>` : '';
     app.innerHTML = `<h1 class="titulo-grande chico">¡Recuperaron<br><span>la Navidad!</span></h1>
       <div class="video-caja"><video src="media/final.mp4" poster="img/poster-final.jpg" controls playsinline preload="auto"></video></div>
       <p class="nota">Dale ▶️ para ver qué pasó con Tilín.</p>
@@ -637,6 +689,7 @@
           <input class="campo" data-f="${f.id}" data-k="nombre" value="${esc(f.nombre)}" aria-label="Nombre">
           <label>Candado <input class="campo corto" data-f="${f.id}" data-k="codigo" value="${esc(f.codigo)}" inputmode="numeric" maxlength="4"></label>
           <label>Agente <input class="campo medio" data-f="${f.id}" data-k="agente" value="${esc(f.agente || '')}" placeholder="(nadie)"></label>
+          <label>Descifradora <input class="campo medio" data-f="${f.id}" data-k="descifradora" value="${esc(f.descifradora || '')}" placeholder="(nadie)"></label>
           <small>Tarjetas color ${esc(f.colorNombre.toLowerCase())}</small></div>`).join('')}
         <h2>2 · Los ${J.pasosPorFamilia} escondites</h2>
         <p class="nota">Cada familia los recorre en distinto orden. Si en tu casa no existe alguno, cámbialo por otro.</p>
@@ -650,7 +703,7 @@
       <section class="pergamino">
         <h2>4 · Imprimir</h2>
         <div class="grid-imprimir">
-          ${[['guia', '📘 Guía del organizador'], ['respuestas', '🤫 Hoja de respuestas'], ['sobres', '✉️ Sobres de misión + kit'], ['pistas', '🗺️ Tarjetas de pistas'], ['trampas', '🪤 Pistas falsas'], ['regalos', '🎁 Regalos falsos'], ['cofre', '🔐 Cofre, candados y QR final'], ['agente', '⭐ Carta y credencial de la Agente'], ['diplomas', '🏆 Diplomas'], ['cuento', '📖 Cuento ilustrado']]
+          ${[['guia', '📘 Guía del organizador'], ['respuestas', '🤫 Hoja de respuestas'], ['sobres', '✉️ Sobres de misión + kit'], ['pistas', '🗺️ Tarjetas de pistas'], ['trampas', '🪤 Pistas falsas'], ['regalos', '🎁 Regalos falsos'], ['cofre', '🔐 Cofre, candados y QR final'], ['agente', '⭐ Cartas y gafetes (Ana Sofía y Gaby)'], ['diplomas', '🏆 Diplomas'], ['cuento', '📖 Cuento ilustrado']]
         .map(([k, t]) => `<a class="btn" href="#/imprimir/${k}">${t}</a>`).join('')}
         </div>
       </section>
@@ -658,7 +711,8 @@
         <h2>5 · Este teléfono</h2>
         <div class="grid-imprimir">
           <a class="btn" href="#/final">🎬 Ver el final</a>
-          <button class="btn" id="org-carta">🎅 Audio de Santa</button>
+          <button class="btn" id="org-carta">🎅 Audio de Santa (Ana Sofía)</button>
+          <button class="btn" id="org-carta2">🎅 Audio de Santa (Gaby)</button>
           <a class="btn" href="#/unirse">👪 Asignar familia</a>
           <button class="btn peligro" id="org-reset">🗑️ Borrar partida de este teléfono</button>
         </div>
@@ -678,6 +732,7 @@
       store.set('rgn-config', o); sfx.ding(); aviso('Guardado ✅'); render();
     });
     $('#org-carta').addEventListener('click', () => clip('santa-carta'));
+    $('#org-carta2').addEventListener('click', () => clip('santa-carta-gaby'));
     $('#res-ok').addEventListener('click', async () => {
       const f = famPorId($('#res-fam').value), k = +$('#res-paso').value;
       const ok = await modal(`<h2>¿Poner a la familia ${esc(f.nombre)} en la pista ${k + 1}?</h2><p>Se reemplaza la partida de este teléfono.</p>`, { botones: [{ txt: 'Cancelar', valor: false }, { txt: 'Aplicar', valor: true, clase: 'primario' }] });

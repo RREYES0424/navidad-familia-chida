@@ -19,7 +19,7 @@ const LISTA = [
   ['trampas', '05-pistas-falsas', true],
   ['regalos', '06-regalos-falsos'],
   ['cofre', '07-cofre-candados-y-qr-final', true],
-  ['agente', '08-carta-de-santa-y-credencial-ana-sofia'],
+  ['agente', '08-cartas-de-santa-y-gafetes-ana-sofia-y-gaby'],
   ['diplomas', '09-diplomas', true],
   ['cuento', '10-cuento-ilustrado'],
 ];

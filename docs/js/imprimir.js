@@ -76,7 +76,9 @@ window.IMPRIMIR = (function () {
               <li>¡Cuidado! Tilín dejó <b>pistas falsas</b> y <b>regalos de mentira</b>.</li>
               <li>Con los 4 números, abran <b>su candado</b> del Cofre Encantado.</li>
             </ol>
-            ${f.agente ? `<p class="agente-nota">⭐ En su equipo está la <b>Agente Especial ${esc(f.agente)}</b>. ¡Ayúdenla con sus misiones!</p>` : ''}
+            ${f.agente ? `<p class="agente-nota">⭐ En su equipo está la <b>Agente Especial ${esc(f.agente)}</b>. ¡Ayúdenla con sus misiones! Si cumple ${J.misionesParaBono}, ganan 1 comodín extra.</p>` : ''}
+            ${f.descifradora ? `<p class="agente-nota">🔐 En su equipo está la <b>Descifradora Oficial ${esc(f.descifradora)}</b>. Al encontrar la pista ${J.pasoRetoExperto} se abre su <b>Reto Experto</b>: si lo resuelve, ganan 1 comodín extra.</p>` : ''}
+            ${!f.agente && !f.descifradora ? `<p class="agente-nota">🔐 Al encontrar la pista ${J.pasoRetoExperto} se abre su <b>Reto Experto</b>: si lo resuelven, ganan 1 comodín extra.</p>` : ''}
           </div>
         </div>
         <div class="sobre-tilin">${tilinSVG({ boca: 'risa', cejas: 'feliz' })}<p>«¡Je, je, je! A ver si pueden…»<br><b>— Tilín</b></p></div>`, 'sobre') +
@@ -138,7 +140,17 @@ window.IMPRIMIR = (function () {
 
   /* ---------------- AGENTE ESPECIAL ---------------- */
   function agente() {
-    const nombre = esc(J.agente);
+    const c = P().cfg();
+    const famA = c.familias.find(f => f.agente) || c.familias[0], famD = c.familias.find(f => f.descifradora) || c.familias[1];
+    const nombre = esc(famA.agente || J.agente), nombreD = esc(famD.descifradora || J.descifradora);
+    const lupa = `<svg viewBox="0 0 100 100"><line x1="60" y1="60" x2="90" y2="90" stroke="#5a2d0c" stroke-width="14" stroke-linecap="round"/><circle cx="40" cy="40" r="30" fill="#bff3ff" stroke="#2b1a10" stroke-width="8"/></svg>`;
+    const gafete = (color, cargo, quien, fam, mision, codigo, emblema) => `<div class="gafete" style="--fam:${color}">
+        <div class="gf-banda"></div><div class="gf-ranura"></div>
+        <div class="gf-titulo">Taller de Santa · Polo Norte</div><div class="gf-cargo">${cargo}</div>
+        <div class="gf-emblema">${emblema}</div>
+        <div class="gf-foto">Pega aquí<br>tu foto</div>
+        <div class="gf-nombre">${quien}</div><div class="gf-familia">Familia ${esc(fam.nombre)}</div>
+        <div class="gf-pie"><span><b>Misión:</b><br>${mision}</span>${qr(P().urlCodigo(codigo))}</div></div>`;
     return hoja(`<div class="carta-santa">
         <div class="cs-sello">🎅</div>
         <p class="cs-lugar">Taller de Santa · Polo Norte</p>
@@ -151,14 +163,29 @@ window.IMPRIMIR = (function () {
         <p class="cs-firma">Con mucho cariño,<br><span>Santa Claus</span><br>¡Jo, jo, jo!</p>
         <div class="cs-qr">${qr(P().urlCodigo(P().cod.carta()), 'qr-chico')}<small>🔊 Escanea y escucha a Santa</small></div>
       </div>`, 'carta') +
-      hoja(`<h2 class="h-cof">Credencial de Agente <small>(recorta y enmica o pega en cartulina)</small></h2>
-        <div class="credenciales">${[1, 2].map(() => `<div class="credencial"><div class="cr-banda">AGENTE ESPECIAL DE SANTA</div>
-          <div class="cr-cuerpo"><div class="cr-foto">Pega aquí<br>tu foto</div><div><small>Nombre</small><b>${nombre}</b><small>Misión</small><b>Proteger la Navidad</b><small>Equipo</small><b>Polo Norte</b></div></div>
-          <div class="cr-estrella">★</div></div>`).join('')}</div>
-        <h2 class="h-cof">Etiqueta para la Llave Dorada y medalla</h2>
-        <div class="fila-agente">
-          <div class="etiqueta-candado" style="--fam:#f5c542"><div class="ec-hoyo"></div><b>Llave Dorada</b><small>Propiedad de la Agente ${nombre}</small></div>
+      hoja(`<div class="carta-santa carta-gaby">
+        <div class="cs-sello">🎅</div>
+        <p class="cs-lugar">Taller de Santa · Polo Norte</p>
+        <h1>Querida ${nombreD}:</h1>
+        <p>Soy Santa Claus. El duende <b>Tilín</b> se robó los regalos de tu casa y, como le encantan los mensajes secretos, dejó acertijos y códigos por todas partes.</p>
+        <p>Necesito a alguien muy lista para descifrarlos. Por eso, te nombro <b>Descifradora Oficial de Santa</b>.</p>
+        <p>Tu misión: ayudar a tu familia con los códigos más difíciles y resolver el <b>Reto Experto</b> que Tilín escondió sólo para ti. Si lo logras, tu familia ganará un comodín extra.</p>
+        <p>Para que calientes motores, aquí va tu primer mensaje secreto (usa el Alfabeto del Duende de tu kit):</p>
+        <div class="cifra-glifos imp-glifos">${P().glifosHTML('BIENVENIDA', 30, '#2b1a10')}</div>
+        <p><b>¡Confío en tu cerebro!</b></p>
+        <p class="cs-firma">Con cariño,<br><span>Santa Claus</span><br>¡Jo, jo, jo!</p>
+        <div class="cs-qr">${qr(P().urlCodigo(P().cod.cartaGaby()), 'qr-chico')}<small>🔊 Escanea y escucha a Santa</small></div>
+      </div>`, 'carta') +
+      hoja(`<h2 class="h-cof">Gafetes <small>(recórtalos, enmícalos o pégalos en cartulina y ponles un cordón en la ranura)</small></h2>
+        <div class="gafetes">
+          ${gafete('#d7263d', 'Agente Especial', nombre, famA, 'Cuidar la Llave Dorada y abrir el último candado.', P().cod.carta(), A.svg(A.icono('estrella', '#f5c542', '#2b1a10'), '0 0 100 100'))}
+          ${gafete('#1b998b', 'Descifradora Oficial', nombreD, famD, 'Descifrar los códigos secretos de Tilín.', P().cod.cartaGaby(), lupa)}
+        </div>
+        <h2 class="h-cof">Etiqueta de la Llave Dorada y medallas <small>(para el final)</small></h2>
+        <div class="fila-medallas">
+          <div class="etiqueta-candado" style="--fam:#f5c542;width:46mm"><div class="ec-hoyo"></div><b>Llave Dorada</b><small>Propiedad de la Agente ${nombre}</small></div>
           <div class="medalla"><div><small>Medalla de</small><b>Agente Especial</b><span>★ ${nombre} ★</span></div></div>
+          <div class="medalla verde"><div><small>Medalla de</small><b>Descifradora Oficial</b><span>★ ${nombreD} ★</span></div></div>
         </div>`, 'agente');
   }
 
@@ -172,7 +199,8 @@ window.IMPRIMIR = (function () {
       <p class="dp-fecha">Navidad ${new Date().getFullYear()}</p></div>
       <div class="dp-tilin">${tilinSVG({ boca: 'risa', cejas: 'feliz' })}</div></div>`, 'horizontal');
     return fams.map(f => d('Diploma de Recuperadores de la Navidad', esc(nombreFam(f).replace('Familia: ______________________', 'Familia _______________')), 'por resolver los acertijos del Duende Tilín, no caer (casi) en sus trampas y rescatar los regalos del Cofre Encantado.', f.color)).join('') +
-      d('Diploma de Agente Especial de Santa', esc(J.agente), 'por cuidar la Llave Dorada con valentía y abrir el último candado del Cofre Encantado. ¡La Navidad está a salvo gracias a ti!', '#f5c542');
+      d('Diploma de Agente Especial de Santa', esc(J.agente), 'por cuidar la Llave Dorada con valentía y abrir el último candado del Cofre Encantado. ¡La Navidad está a salvo gracias a ti!', '#f5c542') +
+      d('Diploma de Descifradora Oficial de Santa', esc(J.descifradora), 'por descifrar los códigos secretos del Duende Tilín y ayudar a su familia a recuperar la Navidad. ¡No hay mensaje secreto que se te resista!', '#1b998b');
   }
 
   /* ---------------- HOJA DE RESPUESTAS ---------------- */
@@ -185,7 +213,8 @@ window.IMPRIMIR = (function () {
         <table class="tabla-resp"><thead><tr><th>#</th><th>Escondite (código tarjeta)</th><th>Cómo se presenta</th><th>Reto → respuesta</th><th>Dígito</th></tr></thead><tbody>
         ${ruta.map((loc, k) => { const r = J.retos[retos[k]], d = J.pasosConDigito.indexOf(k + 1); return `<tr><td>${k + 1}</td><td><b>${esc(J.lugares[loc].nombre)}</b> (${P().cod.lugar(f.id, loc)})</td><td>${tipoNombre[P().presentacion(f, k)]}</td><td>${esc(r.titulo)} → <b>${esc(r.respuestas[0])}</b></td><td>${d >= 0 ? `<b>${esc(f.codigo[d])}</b> (${d + 1}º)` : ''}</td></tr>`; }).join('')}
         </tbody></table>
-        <p class="peque">Pistas falsas: ${Array.from({ length: J.trampasPorFamilia }, (_, n) => P().cod.trampa(f.id, n + 1)).join(', ')}</p>`;
+        <p class="peque">${f.agente ? `<b>Bono:</b> si ${esc(f.agente)} cumple ${J.misionesParaBono} misiones → +1 comodín.` : (() => { const x = J.retosExpertos[f.id] || J.retosExpertos.fx; return `<b>Reto Experto${f.descifradora ? ' de ' + esc(f.descifradora) : ''}</b> (desde la pista ${J.pasoRetoExperto}): ${esc(x.titulo)} → <b>${esc(x.respuestas[0])}</b> (+1 comodín).`; })()}
+        · Pistas falsas: ${Array.from({ length: J.trampasPorFamilia }, (_, n) => P().cod.trampa(f.id, n + 1)).join(', ')}</p>`;
     }).join('');
     return hoja(`<h1 class="h-resp">🤫 Hoja de respuestas <small>¡Sólo para el organizador!</small></h1>${porFam}
       <h2>Regalos falsos</h2><table class="tabla-resp"><tbody>${J.regalosFalsos.map(g => `<tr><td>#${g.id} (${P().cod.regalo(g.id)})</td><td><b>${esc(g.titulo)}</b></td><td>${esc(g.adentro)}</td><td>${{ congelar: `Congela ${g.segundos} s`, comodin: '+1 comodín', reto: 'Reto chistoso', broma: 'Sólo broma' }[g.efecto]}</td></tr>`).join('')}</tbody></table>
@@ -208,6 +237,8 @@ window.IMPRIMIR = (function () {
         <li>En cada tarjeta la app les pone un <b>reto</b> (acertijos, cifrados, trivia). En 4 de ellos ganan un <b>número de su candado</b>.</li>
         <li>Hay <b>pistas falsas</b> (los congelan 1 minuto y les ponen un castigo chistoso) y <b>regalos falsos</b> (unos dan comodines y otros son bromas).</li>
         <li>Al tener los 4 números, la familia abre <b>su candado</b> del cofre. Cuando ya no queda ninguno, ${esc(J.agente)} abre el último con la Llave Dorada. Adentro están los premios y un <b>QR final</b> que muestra cómo termina la historia.</li>
+        <li><b>Gaby</b> es la <b>Descifradora Oficial de Santa</b>: en la app de su familia se abre su <b>Reto Experto</b> al encontrar la pista ${J.pasoRetoExperto}.</li>
+        <li>Cada familia puede ganar <b>1 comodín extra</b>: Reyes Martínez si ${esc(J.agente)} cumple ${J.misionesParaBono} misiones, Reyes Flores si ${esc(J.descifradora)} resuelve su Reto Experto, y las demás con su propio Reto Experto.</li>
         <li>Así hay carrera (¿quién abre primero?), pero <b>todos ganan juntos</b> al final.</li>
       </ul>
       <h2>Lista de compras</h2>
@@ -218,7 +249,8 @@ window.IMPRIMIR = (function () {
         <tr><td>🧰</td><td><b>1 «cofre»</b>: caja de plástico con asas, maleta vieja o baúl donde la pinza o cadena lo deje bien cerrado.</td></tr>
         <tr><td>🏆</td><td><b>Premios</b> para el cofre (para todas las familias y algo especial para ${esc(J.agente)}).</td></tr>
         <tr><td>🎁</td><td><b>8 cajitas</b> + papel de regalo para los regalos falsos, y lo que va adentro: carbón de dulce, 1 chocolate, 1 calcetín viejo, 1 cebolla, varias cajas chicas, 1 galleta, 1 llave vieja, monedas de chocolate.</td></tr>
-        <tr><td>✉️</td><td><b>${activas.length + 1} sobres</b> (uno por familia y uno para la carta de Santa).</td></tr>
+        <tr><td>✉️</td><td><b>${activas.length + 2} sobres</b> (uno por familia y dos para las cartas de Santa).</td></tr>
+        <tr><td>🪪</td><td><b>2 porta-gafetes con cordón</b> (o mica y un listón) para los gafetes de ${esc(J.agente)} y ${esc(J.descifradora)}.</td></tr>
         <tr><td>✂️</td><td>Impresora a color, hojas tamaño carta (mejor si son gruesas), tijeras, cinta, hilo, bolsitas tipo ziploc (para las tarjetas del patio y del refri) y una tachuela o broche para la Rueda del Duende.</td></tr>
         <tr><td>📺</td><td>Tele o pantalla con bocina para los videos (o una laptop / bocina bluetooth).</td></tr>
         <tr><td>📱</td><td>Un celular con internet y batería por familia (el «celular oficial»).</td></tr>
@@ -233,7 +265,7 @@ window.IMPRIMIR = (function () {
         <li>Arma <b>los sobres</b>: hoja «Sobre de Misión» + Kit del Detective (con la Rueda del Duende ya armada, si quieres).</li>
         <li>Arma <b>los regalos falsos</b> (objeto + su tarjeta, envueltos).</li>
         <li>Arma <b>el cofre</b>: premios adentro, encima la tarjeta del <b>QR final</b>, ciérralo con la pinza y todos los candados (con sus etiquetas). Pégale el cartel.</li>
-        <li>Mete la <b>carta de Santa</b> y la <b>Llave Dorada</b> en un sobre para ${esc(J.agente)}.</li>
+        <li>Mete la <b>carta de Santa</b>, su <b>gafete</b> y la <b>Llave Dorada</b> en un sobre para ${esc(J.agente)}, y la carta y el gafete de <b>Descifradora Oficial</b> en otro sobre para ${esc(J.descifradora)}.</li>
         <li><b>Prueba</b> con tu celular: escanea una tarjeta y revisa que abre la app (luego en el panel: «Borrar partida de este teléfono»).</li>
       </ol>
       <h2>El día del juego: 1 hora antes</h2>
@@ -248,7 +280,7 @@ window.IMPRIMIR = (function () {
       <h2>Orden del evento</h2>
       <table class="tabla-guia"><tbody>
         <tr><td><b>0:00</b></td><td>Reúne a todos frente a la tele y pon <b>«📽️ Ver la historia»</b> en la app (2 minutos).</td></tr>
-        <tr><td><b>0:03</b></td><td>¡Tocan la puerta! «Llegó correo del Polo Norte»: entrega a ${esc(J.agente)} su carta y la Llave Dorada. Escanea el QR de la carta para que Santa le hable.</td></tr>
+        <tr><td><b>0:03</b></td><td>¡Tocan la puerta! «Llegó correo del Polo Norte»: entrega a ${esc(J.agente)} su carta, gafete y Llave Dorada, y a ${esc(J.descifradora)} su carta y gafete de Descifradora Oficial. Escanea el QR de cada carta para que Santa les hable.</td></tr>
         <tr><td><b>0:05</b></td><td>Entrega a cada familia su <b>Sobre de Misión</b> y lee las reglas (abajo).</td></tr>
         <tr><td><b>0:07</b></td><td>¡A jugar! Cada familia escanea el QR de su sobre y la app les da la primera pista.</td></tr>
         <tr><td><b>~1:05</b></td><td>Las familias van terminando y abriendo su candado. En la app marcan «Ya abrimos nuestro candado» (queda registrado su tiempo).</td></tr>
@@ -267,7 +299,15 @@ window.IMPRIMIR = (function () {
       <ul>
         <li>Recibe la carta de Santa y guarda la <b>Llave Dorada</b> todo el juego.</li>
         <li>En la app de su familia (${esc((c.familias.find(f => f.agente) || {}).nombre || '')}) aparecen <b>8 misiones</b> con audio: buscar algo rojo, reír como duende, caminar de puntitas… Cada una le da una estrella ⭐.</li>
+        <li>Si cumple ${J.misionesParaBono} misiones, su familia gana <b>1 comodín extra</b>.</li>
         <li>Al final <b>ella abre el último candado</b>: es la heroína de la historia. Dejen que ella apriete el botón de escanear de vez en cuando.</li>
+      </ul>
+      <h2>La Descifradora Oficial ${esc(J.descifradora)}</h2>
+      <ul>
+        <li>Recibe su carta de Santa (con un primer mensaje secreto para practicar) y su gafete.</li>
+        <li>Es la experta del <b>Kit del Detective</b> de su familia: rueda, alfabeto secreto y Morse.</li>
+        <li>Al encontrar la pista ${J.pasoRetoExperto}, en la app aparece su <b>Reto Experto</b> (un doble cifrado). Si lo resuelve, su familia gana <b>1 comodín extra</b>.</li>
+        <li>Sale en los dos videos y tiene su diploma y medalla.</li>
       </ul>
       <h2>Cómo funciona la app</h2>
       <ul>
@@ -301,7 +341,7 @@ window.IMPRIMIR = (function () {
   const TIPOS = {
     guia: ['📘 Guía del organizador', guia, false], respuestas: ['🤫 Hoja de respuestas', respuestas, true], sobres: ['✉️ Sobres de misión + kit', sobres, true],
     pistas: ['🗺️ Tarjetas de pistas', pistas, true], trampas: ['🪤 Pistas falsas', trampas, true], regalos: ['🎁 Regalos falsos', regalos, false],
-    cofre: ['🔐 Cofre y candados', cofre, true], agente: ['⭐ Agente Especial', agente, false], diplomas: ['🏆 Diplomas', diplomas, true], cuento: ['📖 Cuento', cuento, false]
+    cofre: ['🔐 Cofre y candados', cofre, true], agente: ['⭐ Cartas y gafetes', agente, false], diplomas: ['🏆 Diplomas', diplomas, true], cuento: ['📖 Cuento', cuento, false]
   };
 
   function render(tipo, app) {

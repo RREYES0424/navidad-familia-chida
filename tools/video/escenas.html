@@ -601,6 +601,55 @@ ESC.agente = {
   }
 };
 
+/* 11b. GABY, LA DESCIFRADORA OFICIAL */
+ESC.gaby = {
+  build(g) {
+    this.r = rayos(g, '#1b998b', '#14786d', 20, 640, 320);
+    grupo(g, `<circle cx="640" cy="320" r="320" fill="url(#gHalo)" opacity=".55"/>`);
+    // símbolos secretos flotando
+    const R = rng(77), letras = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+    this.glifos = [];
+    for (let i = 0; i < 16; i++) {
+      const l = letras[Math.floor(R() * 27)];
+      const gr = grupo(g, i % 2 ? `<g transform="translate(-22 -22)">${A.glifo(l, 44, '#ffffff')}</g>` : `<text x="0" y="14" font-size="40" text-anchor="middle" class="rotulo" fill="#ffffff">${l}</text>`);
+      gr.dataset.x = R() * 1280; gr.dataset.y = R() * 640; gr.dataset.v = .5 + R(); gr.dataset.f = R() * 6.28;
+      this.glifos.push(gr);
+    }
+    this.placa = grupo(g, `
+      <path d="M0 -215 L175 -150 V10 Q175 150 0 225 Q-175 150 -175 10 V-150 Z" fill="#e8f7ee" stroke="#2b1a10" stroke-width="8" stroke-linejoin="round"/>
+      <path d="M0 -188 L150 -132 V8 Q150 128 0 196 Q-150 128 -150 8 V-132 Z" fill="none" stroke="#1b998b" stroke-width="5"/>
+      <circle cx="0" cy="-40" r="96" fill="#0b1a3a" stroke="#2b1a10" stroke-width="6"/>
+      <text x="0" y="-62" font-size="20" text-anchor="middle" class="rotulo" fill="#7ee8fa">DESCIFRADORA</text>
+      <text x="0" y="-32" font-size="26" text-anchor="middle" class="rotulo" fill="#fff">OFICIAL</text>
+      <text x="0" y="-4" font-size="20" text-anchor="middle" class="rotulo" fill="#f5c542">DE SANTA</text>
+      <g transform="translate(-60 70)">${['A', 'B', 'C'].map((l, i) => `<g transform="translate(${i * 44} 0)">${A.glifo(l, 36, '#1b998b')}</g>`).join('')}</g>
+      <path d="M-300 120 H300 L270 160 L300 200 H-300 L-270 160Z" fill="#d7263d" stroke="#2b1a10" stroke-width="6"/>
+      <text class="gaby-nombre" x="0" y="180" font-size="60" text-anchor="middle" class="titulo" font-family="Mountains" font-weight="700" fill="#fff" stroke="#2b1a10" stroke-width="6" paint-order="stroke">Gaby</text>`);
+    this.lupa = grupo(g, `<line x1="40" y1="40" x2="110" y2="110" stroke="#5a2d0c" stroke-width="22" stroke-linecap="round"/><circle cx="0" cy="0" r="62" fill="rgba(126,232,250,.35)" stroke="#2b1a10" stroke-width="12"/><circle cx="0" cy="0" r="62" fill="none" stroke="#f5c542" stroke-width="6"/><path d="M-30 -30 Q-10 -46 14 -40" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>`);
+    this.ch = chispas(grupo(g), 24, 15, '#ffffff');
+    this.nombre = q(this.placa, '.gaby-nombre');
+  },
+  anim(t, d) {
+    this.r.girar(t * 9); this.ch.animar(t, .8);
+    this.glifos.forEach(gr => { const v = +gr.dataset.v; setT(gr, `translate(${(+gr.dataset.x + t * 30 * v) % 1340 - 30} ${+gr.dataset.y + Math.sin(t * v + +gr.dataset.f) * 20}) rotate(${Math.sin(t * .8 + +gr.dataset.f) * 25})`); setO(gr, .35); });
+    const k = seg(t, .3, 1.1, easeBack);
+    setT(this.placa, `translate(640 300) scale(${k * (1 + .025 * Math.sin(t * 4))})`);
+    // el nombre se "descifra" letra por letra
+    const nombre = 'Gaby', ABCs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let txt = '';
+    for (let i = 0; i < nombre.length; i++) {
+      if (t >= 1.0 + i * .45) txt += nombre[i];
+      else txt += ABCs[(Math.floor(t * 14) * 7 + i * 5) % 26];
+    }
+    this.nombre.textContent = txt;
+    // la lupa pasa por encima del nombre y luego se va a una esquina
+    const kl = seg(t, .6, 2.9, k => k);
+    const lx = t < 2.9 ? lerp(420, 860, kl) : lerp(860, 1100, seg(t, 2.9, 3.6));
+    const ly = t < 2.9 ? 470 + Math.sin(kl * Math.PI * 2) * 12 : lerp(470, 170, seg(t, 2.9, 3.6));
+    setT(this.lupa, `translate(${lx} ${ly}) rotate(${t < 2.9 ? 0 : -20 * seg(t, 2.9, 3.6)})`);
+  }
+};
+
 /* 12. ¡LA MISIÓN COMIENZA! */
 ESC.mision = {
   build(g) {

@@ -202,7 +202,7 @@ ESTILOS = {'alegre': alegre, 'misterio': misterio, 'magico': magico, 'tierno': t
 ANIMO = {
     'titulo': 'alegre', 'polo': 'alegre', 'tilin': 'alegre', 'bromas': 'alegre', 'santa': 'misterio',
     'vuelo': 'magico', 'robo': 'misterio', 'cofre': 'misterio', 'pistas': 'alegre', 'reto': 'misterio',
-    'agente': 'magico', 'mision': 'alegre',
+    'agente': 'magico', 'gaby': 'magico', 'mision': 'alegre',
     'abierto': 'magico', 'triste': 'tierno', 'cena': 'tierno', 'fin': 'alegre',
 }
 
@@ -281,6 +281,11 @@ def efectos(tl):
             en('pistas', d * .55 + i * .45, pop(.5))
     if 'agente' in E:
         en('agente', .3, destello(.6)); en('agente', E['agente']['frases'][1], destello(.5))
+    if 'gaby' in E:
+        en('gaby', .3, destello(.5))
+        for i in range(4):
+            en('gaby', 1.0 + i * .45, clic(.6))
+        en('gaby', 2.9, campana(hz('E6'), 1.5, .5))
     if 'mision' in E:
         for i in range(3):
             en('mision', .5 + i * .35, pop(.5))

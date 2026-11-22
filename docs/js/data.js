@@ -7,6 +7,7 @@ window.JUEGO = {
   titulo: 'El Gran Robo de Navidad',
   villano: 'Tilín',
   agente: 'Ana Sofía',            // la Agente Especial de Santa (familia Reyes Martínez)
+  descifradora: 'Gaby',           // la Descifradora Oficial de Santa (familia Reyes Flores)
   pinOrganizador: '4826',         // PIN para entrar al panel del organizador
   baseUrlPorDefecto: 'https://rreyes0424.github.io/navidad-familia-chida/',
   pasosPorFamilia: 7,
@@ -19,7 +20,7 @@ window.JUEGO = {
      agente: si en la familia hay un/a peque con misiones especiales            */
   familias: [
     { id: 'rm', nombre: 'Reyes Martínez', color: '#d7263d', colorNombre: 'Roja',   icono: 'estrella', codigo: '3815', agente: 'Ana Sofía', activa: true,  offset: 0 },
-    { id: 'rf', nombre: 'Reyes Flores',   color: '#1b998b', colorNombre: 'Verde',  icono: 'arbol',    codigo: '7264', activa: true,  offset: 2 },
+    { id: 'rf', nombre: 'Reyes Flores',   color: '#1b998b', colorNombre: 'Verde',  icono: 'arbol',    codigo: '7264', descifradora: 'Gaby', activa: true,  offset: 2 },
     { id: 'af', nombre: 'Alvarado Flores',color: '#e0a100', colorNombre: 'Dorada', icono: 'campana',  codigo: '5490', activa: true,  offset: 4 },
     { id: 'fx', nombre: 'Familia Invitada', color: '#3a6ea5', colorNombre: 'Azul', icono: 'copo',     codigo: '1736', activa: false, offset: 6 }
   ],
@@ -185,6 +186,19 @@ window.JUEGO = {
     fx: ['kilo', 'platano', 'anagrama', 'patas', 'espejo', 'aguacate', 'edad']
   },
 
+  /* ---------------- RETO EXPERTO (bono de +1 comodín) ----------------
+     Se abre al encontrar la pista 3. En la familia con Descifradora lo resuelve ella.
+     La familia con Agente Especial no tiene Reto Experto: su bono es que la Agente
+     cumpla 4 misiones. Así cada familia tiene una oportunidad de ganar 1 comodín.  */
+  pasoRetoExperto: 3,
+  misionesParaBono: 4,
+  retosExpertos: {
+    rf: { titulo: 'Doble cifrado de Tilín', tipo: 'doble', palabra: 'NOCHEBUENA', clave: 2, texto: 'Tilín escribió una palabra con su Alfabeto secreto… ¡pero antes la cifró con la Rueda del Duende, clave 2! Primero traduzcan los símbolos y luego regresen cada letra 2 lugares en el abecedario (con Ñ).', respuestas: ['nochebuena', 'la nochebuena', 'noche buena'], pista: 'Con el Alfabeto, el primer símbolo es una O. Con la Rueda (clave 2), esa O se convierte en N.', explica: 'Los símbolos decían OQEJGDWGOC y, regresando 2 lugares cada letra, se lee NOCHEBUENA.' },
+    af: { titulo: 'La clave escondida', tipo: 'cesar', palabra: 'TEJOCOTE', clave: 7, texto: 'Tilín cifró con la Rueda del Duende la fruta que nunca falta en el ponche… pero no les dice la clave. Sólo dejó esta nota: «la clave es el número de letras de la palabra NAVIDAD».', respuestas: ['tejocote', 'tejocotes', 'el tejocote'], pista: 'NAVIDAD tiene 7 letras: regresen cada letra 7 lugares.', explica: 'Con clave 7 se lee TEJOCOTE.' },
+    fx: { titulo: 'Los cuatro duendes', texto: 'Tilín, Pipo, Lola y Chispa envolvieron 10 regalos entre los cuatro. Tilín envolvió el doble que Pipo, Lola envolvió uno menos que Pipo y Chispa envolvió 3. ¿Cuántos regalos envolvió Tilín?', respuestas: ['4', 'cuatro'], pista: 'Si Pipo envolvió P regalos: 2P + P + (P − 1) + 3 = 10.', explica: 'Pipo 2, Tilín 4, Lola 1 y Chispa 3.' },
+    rm: { titulo: 'El cascabel en clave', tipo: 'morse', palabra: 'PONCHE', texto: 'Tilín tocó su cascabel para esconder su bebida navideña favorita. ¿Qué dice?', respuestas: ['ponche', 'el ponche'], pista: 'Usen la tabla de Morse. Empieza con P (•——•).', explica: '¡PONCHE!' }
+  },
+
   /* ---------------- MENSAJES DE TILÍN ---------------- */
   mensajesTilin: [
     '¡Je, je, je! Así que ustedes son la familia {familia}. ¿De verdad creen que van a recuperar los regalos? Les dejé una primera pista… si es que la entienden.',
@@ -260,7 +274,8 @@ window.CUENTO = [
   { img: '07-cofre', texto: 'Luego guardó los regalos en su Cofre Encantado y le puso un candado por cada familia. Sólo quien descubra los números secretos podrá abrirlos.' },
   { img: '08-pistas', texto: 'Pero Tilín es muy presumido y no aguantó las ganas de retar a las familias: escondió pistas secretas por toda la casa… y también pistas falsas y regalos de mentira para engañarlos. —¡Je, je, je! ¡A ver si pueden!' },
   { img: '09-agente', texto: 'Lo que Tilín no sabía es que Santa ya había nombrado a una Agente Especial para proteger la Navidad en esta casa: ¡Ana Sofía! Ella guarda la Llave Dorada, la única que puede abrir el último candado del cofre.' },
-  { img: '10-mision', texto: 'Ahora todo depende de ustedes, familias. Abran su sobre de misión, escaneen los códigos, resuelvan los acertijos del duende y no caigan en sus trampas. ¡Recuperen la Navidad!' }
+  { img: '10-gaby', texto: 'Y como a Tilín le encantan los mensajes secretos, Santa también nombró a una Descifradora Oficial: ¡Gaby! No hay código, cifrado ni acertijo que se le resista. Tilín le dejó un Reto Experto… a ver si puede con él.' },
+  { img: '11-mision', texto: 'Ahora todo depende de ustedes, familias. Abran su sobre de misión, escaneen los códigos, resuelvan los acertijos del duende y no caigan en sus trampas. ¡Recuperen la Navidad!' }
 ];
 
 /* ---------------- GUION DEL VIDEO (para narrarlo en vivo) ---------------- */
@@ -277,8 +292,9 @@ window.GUION = [
   { voz: 'Narradora', texto: 'Pero Tilín es tan presumido, que no se aguantó las ganas de retarlos: escondió pistas secretas por toda la casa… y también pistas falsas y regalos de mentira, para engañarlos.' },
   { voz: 'Tilín', texto: '¡Je, je, je! ¿Se creen muy listos? Encuentren mis pistas, resuelvan mis acertijos y consigan los números de sus candados… ¡si es que pueden!' },
   { voz: 'Narradora', texto: 'Pero Tilín no sabía algo muy importante. Santa ya había nombrado a una Agente Especial para proteger la Navidad en esta casa: ¡Ana Sofía! Ella guarda la Llave Dorada: la única que puede abrir el último candado del cofre.' },
+  { voz: 'Narradora', texto: 'Y como a Tilín le encantan los mensajes secretos, Santa también nombró a una Descifradora Oficial: ¡Gaby! No hay código, cifrado ni acertijo que se le resista.' },
   { voz: 'Narradora', texto: 'Familias: la misión comienza ahora. Abran su sobre de misión, escaneen el código con la app… y no se dejen engañar por el duende. ¡Recuperen la Navidad!' },
-  { voz: 'Final · Narradora', texto: '¡Lo lograron! Todas las familias abrieron sus candados, y la Agente Especial Ana Sofía abrió el último con la Llave Dorada.' },
+  { voz: 'Final · Narradora', texto: '¡Lo lograron! Con la ayuda de Gaby, la Descifradora Oficial, ningún código de Tilín quedó sin resolver. Todas las familias abrieron sus candados, y la Agente Especial Ana Sofía abrió el último con la Llave Dorada.' },
   { voz: 'Final · Tilín', texto: 'Está bien, está bien… me ganaron. ¿Saben por qué me robé los regalos? Porque yo nunca había pasado una Navidad en familia.' },
   { voz: 'Final · Narradora', texto: 'Las familias, en lugar de enojarse, invitaron a Tilín a quedarse a la cena de Navidad.' },
   { voz: 'Final · Tilín', texto: '¿De verdad? ¡Gracias! Prometo portarme bien… bueno, casi siempre. ¡Je, je!' },
