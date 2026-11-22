@@ -26,7 +26,7 @@ INTRO = [
     ], 0.9, 0),
     ("vuelo", 0.8, [
         ("N", "Esa misma noche, Tilín se subió a un trineo viejito y voló, y voló, hasta México…"),
-        ("N", "…hasta la casa donde las familias Reyes Martínez, Reyes Flores y Alvarado Flores se reúnen para celebrar la Navidad."),
+        ("N", "…hasta la casa donde las familias Reyes Ramírez, Reyes Flores y Alvarado Flores se reúnen para celebrar la Navidad."),
     ], 0.8, 0),
     ("robo", 0.6, [
         ("N", "Para que nadie lo escuchara, le metió un algodón a su cascabel… y entró de puntitas."),

@@ -182,7 +182,7 @@ ESC.titulo = {
     nieveSuelo(g);
     this.titulo1 = texto(g, 'El Gran Robo', 640, 250, 118);
     this.titulo2 = texto(g, 'de Navidad', 640, 370, 118, '#ff5a6e');
-    this.sub = texto(g, 'Una aventura de las familias Reyes Martínez, Reyes Flores y Alvarado Flores', 600, 425, 28, '#fff', '#0b1a3a', 'rotulo', 6);
+    this.sub = texto(g, 'Una aventura de las familias Reyes Ramírez, Reyes Flores y Alvarado Flores', 600, 425, 28, '#fff', '#0b1a3a', 'rotulo', 6);
     this.tilin = crearTilin(g);
     this.ch = chispas(grupo(g), 28, 3);
   },
@@ -282,7 +282,7 @@ ESC.tilin = {
     this.duendes = [0, 1].map(i => crearTilin(g, { gorro: '#d7263d', gorroOsc: '#8a1622', ropa: '#c0392b', ropaOsc: '#8a1622', cuello: '#1f9d55', sinCascabel: true, cejas: 'normal' }));
     this.tilin = crearTilin(g);
     this.notas = [0, 1, 2].map(() => grupo(g, `<text font-size="34" class="rotulo" fill="#f5c542" stroke="#2b1a10" stroke-width="4" paint-order="stroke">tilín</text>`));
-    this.cartel = grupo(g, `<path d="M-170 -40 H170 L150 0 L170 40 H-170 L-150 0Z" fill="#1f9d55" stroke="#2b1a10" stroke-width="5"/><text x="0" y="22" font-size="64" text-anchor="middle" class="titulo" fill="#fff" stroke="#2b1a10" stroke-width="6" paint-order="stroke">¡Tilín!</text>`);
+    this.cartel = grupo(g, `<path d="M-205 -44 H205 L182 0 L205 44 H-205 L-182 0Z" fill="#1f9d55" stroke="#2b1a10" stroke-width="5"/><text x="0" y="22" font-size="64" text-anchor="middle" class="titulo" fill="#fff" stroke="#2b1a10" stroke-width="6" paint-order="stroke">¡Tilín!</text>`);
   },
   anim(t, d) {
     [[200, false], [1100, true]].forEach(([x, fl], i) => { const du = this.duendes[i]; du.pos(x, 640, .8, fl); du.parpadeo(t + i * 1.3); du.brazo('der', -40 + Math.sin(t * 6 + i) * 25); });
@@ -295,7 +295,7 @@ ESC.tilin = {
       const s = seg(t, 3.6, 4.2); T.brazo('der', -150 * s + Math.sin(t * 10) * 15 * s); T.cascabel(Math.sin(t * 12) * 20);
       T.cabeza(Math.sin(t * 3) * 4);
     }
-    this.notas.forEach((n, i) => { const p = ((t * .9 + i / 3) % 1); const x = lerp(-150, 640, kx) + 150 + i * 20; setT(n, `translate(${x + p * 60} ${330 - p * 140}) rotate(${-10 + i * 10})`); setO(n, andando || t < 5 ? (1 - p) : 0); });
+    this.notas.forEach((n, i) => { const p = ((t * .9 + i / 3) % 1); const x = lerp(-150, 640, kx) + 140 + i * 70; setT(n, `translate(${x + p * 40} ${360 - i * 55 - p * 90}) rotate(${-10 + i * 10})`); setO(n, andando || t < 5 ? (1 - p) : 0); });
     const kc = seg(t, 4.0, 4.6, easeBack); setT(this.cartel, `translate(640 140) scale(${kc})`);
   }
 };
@@ -317,7 +317,7 @@ ESC.bromas = {
     this.v3 = grupo(g, marco(`<g transform="translate(-60 30)"><circle cx="0" cy="0" r="40" fill="#d9a066" stroke="#2b1a10" stroke-width="3"/><circle cx="-12" cy="-8" r="5" fill="#5a2d0c"/><circle cx="14" cy="6" r="5" fill="#5a2d0c"/><circle cx="-4" cy="16" r="4" fill="#5a2d0c"/><circle cx="10" cy="-18" r="4" fill="#5a2d0c"/></g>
       <g class="salero" transform="translate(70 -30)"><path d="M-30 70 L-24 -20 Q0 -40 24 -20 L30 70Z" fill="#fff" stroke="#2b1a10" stroke-width="4"/><rect x="-22" y="-44" width="44" height="22" rx="6" fill="#bbb" stroke="#2b1a10" stroke-width="3"/><text x="0" y="40" font-size="30" text-anchor="middle" class="rotulo" fill="#2b1a10">SAL</text></g>
       <g class="granos"></g>
-      <text class="guacala" x="-60" y="-70" font-size="40" text-anchor="middle" class="rotulo" fill="#1f9d55" stroke="#fff" stroke-width="5" paint-order="stroke" opacity="0">¡Guácala!</text>`));
+      <text class="guacala" x="0" y="134" font-size="36" text-anchor="middle" class="rotulo" fill="#1f9d55" stroke="#fff" stroke-width="5" paint-order="stroke" opacity="0">¡Guácala!</text>`));
     const granos = q(this.v3, '.granos'); for (let i = 0; i < 14; i++) el('circle', { cx: 0, cy: 0, r: 3, fill: '#fff', stroke: '#999', 'stroke-width': 1, class: 'grano' }, granos);
     this.tilin = crearTilin(g);
   },
@@ -415,9 +415,9 @@ ESC.vuelo = {
     this.trineo = grupo(g);
     this.tilin = crearTilin(this.trineo);
     grupo(this.trineo, A.trineo());
-    this.cartel = grupo(g, `<rect x="-330" y="-46" width="660" height="92" rx="20" fill="#fff8e7" stroke="#2b1a10" stroke-width="5"/>
+    this.cartel = grupo(g, `<rect x="-400" y="-48" width="800" height="96" rx="20" fill="#fff8e7" stroke="#2b1a10" stroke-width="5"/>
       <text x="0" y="-8" font-size="30" text-anchor="middle" class="rotulo" fill="#2b1a10">Familias</text>
-      <text x="0" y="30" font-size="30" text-anchor="middle" class="rotulo"><tspan fill="#d7263d">Reyes Martínez</tspan><tspan fill="#2b1a10"> · </tspan><tspan fill="#1b998b">Reyes Flores</tspan><tspan fill="#2b1a10"> · </tspan><tspan fill="#c98a00">Alvarado Flores</tspan></text>`);
+      <text x="0" y="31" font-size="28" text-anchor="middle" class="rotulo"><tspan fill="#d7263d">Reyes Ramírez</tspan><tspan fill="#2b1a10"> · </tspan><tspan fill="#1b998b">Reyes Flores</tspan><tspan fill="#2b1a10"> · </tspan><tspan fill="#c98a00">Alvarado Flores</tspan></text>`);
   },
   anim(t, d, f) {
     titilar(this.g, t);
@@ -491,7 +491,7 @@ ESC.cofre = {
     this.cofre = grupo(g, A.cofre());
     this.caen = [0, 1, 2, 3].map(i => grupo(g, A.regalo(['#d7263d', '#1b998b', '#f5c542', '#7c5cbf'][i], '#fff', 0, 0, .8)));
     this.etiquetas = grupo(g);
-    const nombres = [['Reyes\nMartínez', '#ff8a96'], ['Reyes\nFlores', '#5ee0cf'], ['Alvarado\nFlores', '#ffd95e'], ['¿?', '#8fb8ec'], ['Llave\nDorada', '#fff3b0']];
+    const nombres = [['Reyes\nRamírez', '#ff8a96'], ['Reyes\nFlores', '#5ee0cf'], ['Alvarado\nFlores', '#ffd95e'], ['¿?', '#8fb8ec'], ['Llave\nDorada', '#fff3b0']];
     this.etqs = nombres.map(([n, c], i) => { const e = grupo(this.etiquetas, n.split('\n').map((l, j) => `<text x="0" y="${j * 21}" font-size="18" text-anchor="middle" class="rotulo" fill="${c}" stroke="#0b1a3a" stroke-width="5" paint-order="stroke">${l}</text>`).join('')); return e; });
     this.tilin = crearTilin(g);
     this.locks = ['.cd-0', '.cd-1', '.cd-2', '.cd-3', '.cd-llave'].map(s => { const e = q(this.cofre, s); e.dataset.o = e.getAttribute('transform'); return e; });
@@ -526,13 +526,13 @@ ESC.pistas = {
     const R = rng(11);
     const colores = ['#d7263d', '#1b998b', '#e0a100', '#3a6ea5'];
     this.cartas = [];
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 12; i++) {
       const c = grupo(g, A.tarjeta(colores[i % 4]));
-      c.dataset.dx = (R() * 2 - 1) * 560; c.dataset.dy = -120 - R() * 330; c.dataset.r = (R() * 2 - 1) * 540; c.dataset.f = R();
+      c.dataset.dx = ((i % 2 ? 1 : -1) * (.25 + .75 * (Math.floor(i / 2) / 5))) * 520 + (R() - .5) * 40; c.dataset.dy = -110 - R() * 240; c.dataset.r = (R() * 2 - 1) * 540; c.dataset.f = R();
       this.cartas.push(c);
     }
-    this.falsos = [[200, 600], [470, 640], [800, 620], [1080, 650]].map(([x, y], i) => {
-      const r = grupo(g, A.regalo(['#7c5cbf', '#e84a8a', '#ff8c42', '#4caf50'][i], '#fff', -50, -100, 1) + `<g transform="translate(46 -110)"><circle r="20" fill="#fff" stroke="#2b1a10" stroke-width="3"/><text y="10" font-size="30" text-anchor="middle" class="rotulo" fill="#d7263d">?</text></g>`);
+    this.falsos = [[150, 600], [390, 640], [890, 630], [1130, 650]].map(([x, y], i) => {
+      const r = grupo(g, A.regalo(['#7c5cbf', '#e84a8a', '#ff8c42', '#4caf50'][i], '#fff', -50, -100, 1) + `<g transform="translate(46 -110)"><circle r="25" fill="#fff" stroke="#2b1a10" stroke-width="3"/><text y="10" font-size="28" text-anchor="middle" class="rotulo" fill="#d7263d">?</text></g>`);
       r.dataset.x = x; r.dataset.y = y; return r;
     });
     this.tilin = crearTilin(g);
@@ -624,7 +624,7 @@ ESC.gaby = {
       <text x="0" y="-4" font-size="20" text-anchor="middle" class="rotulo" fill="#f5c542">DE SANTA</text>
       <g transform="translate(-60 70)">${['A', 'B', 'C'].map((l, i) => `<g transform="translate(${i * 44} 0)">${A.glifo(l, 36, '#1b998b')}</g>`).join('')}</g>
       <path d="M-300 120 H300 L270 160 L300 200 H-300 L-270 160Z" fill="#d7263d" stroke="#2b1a10" stroke-width="6"/>
-      <text class="gaby-nombre" x="0" y="180" font-size="60" text-anchor="middle" class="titulo" font-family="Mountains" font-weight="700" fill="#fff" stroke="#2b1a10" stroke-width="6" paint-order="stroke">Gaby</text>`);
+      <text class="gaby-nombre" x="0" y="174" font-size="52" text-anchor="middle" class="titulo" font-family="Mountains" font-weight="700" fill="#fff" stroke="#2b1a10" stroke-width="6" paint-order="stroke">Gaby</text>`);
     this.lupa = grupo(g, `<line x1="40" y1="40" x2="110" y2="110" stroke="#5a2d0c" stroke-width="22" stroke-linecap="round"/><circle cx="0" cy="0" r="62" fill="rgba(126,232,250,.35)" stroke="#2b1a10" stroke-width="12"/><circle cx="0" cy="0" r="62" fill="none" stroke="#f5c542" stroke-width="6"/><path d="M-30 -30 Q-10 -46 14 -40" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>`);
     this.ch = chispas(grupo(g), 24, 15, '#ffffff');
     this.nombre = q(this.placa, '.gaby-nombre');
@@ -655,7 +655,7 @@ ESC.mision = {
   build(g) {
     cielo(g, true, 160, 120);
     nieveSuelo(g);
-    const fams = [['estrella', '#d7263d', 'Reyes Martínez'], ['arbol', '#1b998b', 'Reyes Flores'], ['campana', '#e0a100', 'Alvarado Flores']];
+    const fams = [['estrella', '#d7263d', 'Reyes Ramírez'], ['arbol', '#1b998b', 'Reyes Flores'], ['campana', '#e0a100', 'Alvarado Flores']];
     this.fams = fams.map(([ic, c, n]) => grupo(g, `<circle r="78" fill="${c}" stroke="#fff" stroke-width="8"/><g transform="translate(-44 -50) scale(.88)">${A.icono(ic, '#fff', '#2b1a10')}</g>
       <text y="120" font-size="32" text-anchor="middle" class="rotulo" fill="#fff" stroke="#0b1a3a" stroke-width="7" paint-order="stroke">${n}</text>`));
     this.telefono = grupo(g, `<rect x="-70" y="-130" width="140" height="260" rx="22" fill="#222" stroke="#fff" stroke-width="5"/><rect x="-58" y="-108" width="116" height="200" rx="8" fill="#fff"/>
@@ -667,13 +667,12 @@ ESC.mision = {
   },
   anim(t, d, f) {
     titilar(this.g, t);
-    this.fams.forEach((fm, i) => { const k = seg(t, .4 + i * .35, .9 + i * .35, easeBack); setT(fm, `translate(${300 + i * 300} ${lerp(800, 400, k) + Math.sin(t * 2 + i) * 6})`); });
+    this.fams.forEach((fm, i) => { const k = seg(t, .4 + i * .35, .9 + i * .35, easeBack); setT(fm, `translate(${300 + i * 300} ${400 + Math.sin(t * 2 + i) * 6}) scale(${k})`); setO(fm, k > 0 ? 1 : 0); });
     const kt = seg(t, 3.2, 3.8, easeBack);
-    setT(this.telefono, `translate(${1165} ${lerp(900, 420, kt)}) rotate(${-8 + Math.sin(t * 2) * 3})`);
+    setT(this.telefono, `translate(1165 420) rotate(${-8 + Math.sin(t * 2) * 3}) scale(${kt})`); setO(this.telefono, kt > 0 ? 1 : 0);
     setT(q(this.telefono, '.laser'), `translate(0 ${40 + Math.sin(t * 4) * 36})`);
     const kg = seg(t, f[1] - .2, f[1] + .6, easeBack);
     setT(this.gran, `translate(640 180) scale(${kg}) translate(-640 -180)`);
-    this.fams.forEach((fm, i) => setO(fm, 1));
     this.ch.animar(t, seg(t, f[1], f[1] + .5));
     const T = this.tilin; const kk = seg(t, f[1] + .8, f[1] + 1.6, easeOut);
     T.pos(lerp(-200, 95, kk), 712, .75, false); T.boca('o'); T.cejas('triste'); T.parpadeo(t);

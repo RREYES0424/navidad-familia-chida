@@ -175,7 +175,7 @@ window.ARTE = (function () {
       ${conLlave
         ? `<circle cx="0" cy="16" r="5" fill="${O}"/><path d="M-2 18 h4 l2 12 h-8z" fill="${O}"/>`
         : `<rect x="-16" y="16" width="32" height="14" rx="3" fill="#20232a"/>
-           <text x="0" y="27.5" font-family="monospace" font-size="11" fill="#fff" text-anchor="middle" font-weight="bold">· · · ·</text>`}
+           <circle cx="-9" cy="23" r="2" fill="#fff"/><circle cx="-3" cy="23" r="2" fill="#fff"/><circle cx="3" cy="23" r="2" fill="#fff"/><circle cx="9" cy="23" r="2" fill="#fff"/>`}
     </g>`;
   }
 

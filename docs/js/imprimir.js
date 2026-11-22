@@ -238,7 +238,7 @@ window.IMPRIMIR = (function () {
         <li>Hay <b>pistas falsas</b> (los congelan 1 minuto y les ponen un castigo chistoso) y <b>regalos falsos</b> (unos dan comodines y otros son bromas).</li>
         <li>Al tener los 4 números, la familia abre <b>su candado</b> del cofre. Cuando ya no queda ninguno, ${esc(J.agente)} abre el último con la Llave Dorada. Adentro están los premios y un <b>QR final</b> que muestra cómo termina la historia.</li>
         <li><b>Gaby</b> es la <b>Descifradora Oficial de Santa</b>: en la app de su familia se abre su <b>Reto Experto</b> al encontrar la pista ${J.pasoRetoExperto}.</li>
-        <li>Cada familia puede ganar <b>1 comodín extra</b>: Reyes Martínez si ${esc(J.agente)} cumple ${J.misionesParaBono} misiones, Reyes Flores si ${esc(J.descifradora)} resuelve su Reto Experto, y las demás con su propio Reto Experto.</li>
+        <li>Cada familia puede ganar <b>1 comodín extra</b>: Reyes Ramírez si ${esc(J.agente)} cumple ${J.misionesParaBono} misiones, Reyes Flores si ${esc(J.descifradora)} resuelve su Reto Experto, y las demás con su propio Reto Experto.</li>
         <li>Así hay carrera (¿quién abre primero?), pero <b>todos ganan juntos</b> al final.</li>
       </ul>
       <h2>Lista de compras</h2>
@@ -331,17 +331,25 @@ window.IMPRIMIR = (function () {
   /* ---------------- CUENTO ---------------- */
   function cuento() {
     const pags = window.CUENTO || [];
-    let h = hoja(`<div class="cuento-portada"><h1>El Gran Robo<br><span>de Navidad</span></h1>${tilinSVG({ boca: 'risa', cejas: 'feliz' })}<p>Un cuento para las familias Reyes Martínez, Reyes Flores y Alvarado Flores</p></div>`, 'cuento');
+    let h = hoja(`<div class="cuento-portada"><h1>El Gran Robo<br><span>de Navidad</span></h1>${tilinSVG({ boca: 'risa', cejas: 'feliz' })}<p>Un cuento para las familias Reyes Ramírez, Reyes Flores y Alvarado Flores</p></div>`, 'cuento');
     for (let i = 0; i < pags.length; i += 2) {
       h += hoja(pags.slice(i, i + 2).map(p => `<figure class="cuento-pag"><img src="img/cuento/${p.img}.jpg" alt=""><figcaption>${esc(p.texto).replace(/\n/g, '<br>')}</figcaption></figure>`).join(''), 'cuento');
     }
     return h;
   }
 
+  function prueba() {
+    const c = P().cfg();
+    return hoja(`<h1 class="h-resp">🧪 Plan de prueba <small>para el organizador, antes del día del juego</small></h1>
+      <p>En la app: <b>🔑 Organizador → 🧪 Modo prueba</b>. Ahí puedes jugar como cada familia sin tarjetas; el botón <b>🧪 Simular</b> finge los escaneos y pone las respuestas. Nada de esto afecta la partida real.</p>
+      <p class="peque">Familias: ${c.familias.map(f => `${esc(f.nombre)} (candado ${esc(f.codigo)}${f.activa ? '' : ', aún no juega'})`).join(' · ')}</p>
+      ${window.PRUEBA_LISTA.map(g => `<h2>${g.rol}</h2><ul class="checklist imp">${g.pasos.map(p => `<li><span class="caja-chk"></span>${esc(p)}</li>`).join('')}</ul>`).join('')}`, 'guia flujo');
+  }
+
   const TIPOS = {
     guia: ['📘 Guía del organizador', guia, false], respuestas: ['🤫 Hoja de respuestas', respuestas, true], sobres: ['✉️ Sobres de misión + kit', sobres, true],
     pistas: ['🗺️ Tarjetas de pistas', pistas, true], trampas: ['🪤 Pistas falsas', trampas, true], regalos: ['🎁 Regalos falsos', regalos, false],
-    cofre: ['🔐 Cofre y candados', cofre, true], agente: ['⭐ Cartas y gafetes', agente, false], diplomas: ['🏆 Diplomas', diplomas, true], cuento: ['📖 Cuento', cuento, false]
+    cofre: ['🔐 Cofre y candados', cofre, true], agente: ['⭐ Cartas y gafetes', agente, false], diplomas: ['🏆 Diplomas', diplomas, true], cuento: ['📖 Cuento', cuento, false], prueba: ['🧪 Plan de prueba', prueba, false]
   };
 
   function render(tipo, app) {
@@ -365,7 +373,7 @@ window.IMPRIMIR = (function () {
     document.documentElement.classList.toggle('pagina-horizontal', tipo === 'diplomas');
     let st = document.getElementById('estilo-pagina');
     if (!st) { st = document.createElement('style'); st.id = 'estilo-pagina'; document.head.appendChild(st); }
-    st.textContent = `@page { size: letter ${tipo === 'diplomas' ? 'landscape' : 'portrait'}; margin: ${['guia', 'respuestas'].includes(tipo) ? '11mm' : '0'}; }`;
+    st.textContent = `@page { size: letter ${tipo === 'diplomas' ? 'landscape' : 'portrait'}; margin: ${['guia', 'respuestas', 'prueba'].includes(tipo) ? '11mm' : '0'}; }`;
     pinta();
   }
   function ajusta() {

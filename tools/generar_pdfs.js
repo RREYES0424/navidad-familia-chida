@@ -22,6 +22,7 @@ const LISTA = [
   ['agente', '08-cartas-de-santa-y-gafetes-ana-sofia-y-gaby'],
   ['diplomas', '09-diplomas', true],
   ['cuento', '10-cuento-ilustrado'],
+  ['prueba', '11-plan-de-prueba'],
 ];
 
 (async () => {

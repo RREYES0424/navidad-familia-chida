@@ -1,6 +1,6 @@
 # 🎄 El Gran Robo de Navidad
 
-Búsqueda del tesoro navideña para las familias **Reyes Martínez**, **Reyes Flores** y **Alvarado Flores** (y una 4ª familia que se puede activar).
+Búsqueda del tesoro navideña para las familias **Reyes Ramírez**, **Reyes Flores** y **Alvarado Flores** (y una 4ª familia que se puede activar).
 
 El duende **Tilín**, el más travieso del taller de Santa, se robó los regalos y los encerró en su **Cofre Encantado** con un candado por familia. Cada familia sigue su ruta de pistas con códigos QR, resuelve los acertijos del duende y gana los números de su candado. La **Agente Especial Ana Sofía** guarda la **Llave Dorada**, la única que abre el último candado, y **Gaby** es la **Descifradora Oficial de Santa**, con un Reto Experto secreto que da a su familia un comodín extra.
 
@@ -40,11 +40,14 @@ En la app: **🔑 Organizador** (PIN **4826**). Ahí puedes:
 - Volver a imprimir todo con tus cambios.
 - Rescatar una partida si a una familia se le borró el avance.
 
+- **🧪 Modo prueba:** jugar como cualquier familia sin tarjetas, con un botón «Simular» para fingir escaneos y ver respuestas, y una lista de verificación rol por rol (también en `imprimibles/11-plan-de-prueba.pdf`). No afecta la partida real del celular.
+
 Para cambiar los textos, acertijos o retos, edita `docs/js/data.js`.
 
 ## Para desarrolladores
 
 - La app es HTML/CSS/JS sin dependencias de compilación. Para probarla: `cd docs && python3 -m http.server 8765`.
+- Revisar que ningún texto se salga de su contenedor: `node tools/revisar/revisar-app.js` (app en celulares de 320 a 414 px e imprimibles) y `node tools/revisar/revisar-video.js <timeline.json>` (cada cuadro del video).
 - Regenerar los PDF: con el servidor anterior corriendo, `node tools/generar_pdfs.js` (necesita Playwright).
 - Regenerar los videos: `tools/video/hacer_videos.sh` (necesita Python con `kokoro-onnx`, `soundfile` y `numpy`, los modelos de voz de Kokoro, Node + Playwright y ffmpeg). El guion está en `tools/video/guion.py`, las escenas en `tools/video/escenas.html` y la música y los efectos se generan en `tools/video/mezcla.py`.
 

@@ -87,8 +87,16 @@
   };
 
   /* ---------------- estado de la partida (por teléfono) ---------------- */
-  let E = store.get('rgn-estado', null);
-  const guarda = () => store.set('rgn-estado', E);
+  /* modo prueba: la partida se guarda aparte para no tocar la partida real */
+  const sesion = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, v); } catch (e) { } } };
+  let PRUEBA = sesion.get('rgn-modo-prueba') === '1';
+  let CLAVE = PRUEBA ? 'rgn-prueba' : 'rgn-estado';
+  let E = store.get(CLAVE, null);
+  const guarda = () => store.set(CLAVE, E);
+  function modoPrueba(activo) {
+    PRUEBA = activo; sesion.set('rgn-modo-prueba', activo ? '1' : null);
+    CLAVE = activo ? 'rgn-prueba' : 'rgn-estado'; E = store.get(CLAVE, null);
+  }
   function nuevaPartida(d) {
     const fam = famPorId(d.f) || J.familias[0];
     E = {
@@ -180,7 +188,7 @@
       ov.innerHTML = `<video playsinline muted autoplay></video><div class="mira"><span></span></div>
         <div class="esc-arriba"><p class="esc-msg">${esc(titulo)}</p></div>
         <div class="esc-abajo">
-          <form class="esc-manual"><input type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="6" placeholder="o escribe el código (ej. K7PX)"><button class="btn primario">OK</button></form>
+          <form class="esc-manual"><input type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="6" placeholder="o escribe el código"><button class="btn primario">OK</button></form>
           <button class="btn esc-cerrar">Cerrar</button>
         </div>`;
       capas.appendChild(ov);
@@ -629,6 +637,7 @@
     if (sub === 'rueda') {
       cuerpo = `<p>Para descifrar, cada letra del mensaje se <b>regresa</b> tantos lugares como diga la clave. Muevan la clave y lean: arriba la letra del mensaje, abajo la letra verdadera.</p>
         <label class="clave">Clave: <button class="btn chico" id="k-menos">−</button><b id="k-val">3</b><button class="btn chico" id="k-mas">＋</button></label>
+        <p class="tira-leyenda"><span class="m">Arriba: letra del mensaje</span> <span class="v">Abajo: letra verdadera</span></p>
         <div class="tira" id="tira"></div>
         <form id="f-descifra" class="form-reto"><input class="campo" id="t-cifrado" placeholder="Escriban el mensaje cifrado" autocapitalize="characters"><button class="btn primario">Descifrar</button></form>
         <p class="resultado" id="t-resultado"></p>`;
@@ -647,7 +656,7 @@
       let k = 3;
       const pinta = () => {
         $('#k-val').textContent = k;
-        $('#tira').innerHTML = `<div class="tira-fila"><small>Mensaje</small>${ABC.split('').map((_, i) => `<span>${ABC[(i + k) % 27]}</span>`).join('')}</div><div class="tira-fila real"><small>Verdad</small>${ABC.split('').map(l => `<span>${l}</span>`).join('')}</div>`;
+        $('#tira').innerHTML = ABC.split('').map((_, i) => `<div class="par"><span class="m">${ABC[(i + k) % 27]}</span><span class="v">${ABC[i]}</span></div>`).join('');
         const t = $('#t-cifrado').value; if (t) $('#t-resultado').textContent = '→ ' + cesar(t, 27 - k);
       };
       $('#k-menos').addEventListener('click', () => { k = (k + 26) % 27 || 26; pinta(); });
@@ -704,11 +713,14 @@
         <h2>4 · Imprimir</h2>
         <div class="grid-imprimir">
           ${[['guia', '📘 Guía del organizador'], ['respuestas', '🤫 Hoja de respuestas'], ['sobres', '✉️ Sobres de misión + kit'], ['pistas', '🗺️ Tarjetas de pistas'], ['trampas', '🪤 Pistas falsas'], ['regalos', '🎁 Regalos falsos'], ['cofre', '🔐 Cofre, candados y QR final'], ['agente', '⭐ Cartas y gafetes (Ana Sofía y Gaby)'], ['diplomas', '🏆 Diplomas'], ['cuento', '📖 Cuento ilustrado']]
-        .map(([k, t]) => `<a class="btn" href="#/imprimir/${k}">${t}</a>`).join('')}
+        .concat([['prueba', '🧪 Plan de prueba']]).map(([k, t]) => `<a class="btn" href="#/imprimir/${k}">${t}</a>`).join('')}
         </div>
       </section>
       <section class="pergamino">
-        <h2>5 · Este teléfono</h2>
+        <h2>5 · Probar el juego</h2>
+        <p class="nota">Juega como cualquier familia sin tarjetas, con una lista de todo lo que hay que revisar. No afecta la partida real.</p>
+        <a class="btn primario grande" href="#/prueba">🧪 Modo prueba</a>
+        <h2>6 · Este teléfono</h2>
         <div class="grid-imprimir">
           <a class="btn" href="#/final">🎬 Ver el final</a>
           <button class="btn" id="org-carta">🎅 Audio de Santa (Ana Sofía)</button>
@@ -718,7 +730,7 @@
         </div>
         <h2>Rescate: poner partida en la pista…</h2>
         <p class="nota">Si una familia perdió su avance o cambió de celular, elige su familia y la pista que estaban buscando.</p>
-        <div class="form-reto"><select class="campo" id="res-fam">${c.familias.filter(f => f.activa).map(f => `<option value="${f.id}">${esc(f.nombre)}</option>`).join('')}</select>
+        <div class="form-reto rescate"><select class="campo" id="res-fam">${c.familias.filter(f => f.activa).map(f => `<option value="${f.id}">${esc(f.nombre)}</option>`).join('')}</select>
           <select class="campo corto" id="res-paso">${Array.from({ length: J.pasosPorFamilia }, (_, i) => `<option value="${i}">Pista ${i + 1}</option>`).join('')}</select>
           <button class="btn" id="res-ok">Aplicar</button></div>
       </section>`;
@@ -745,9 +757,87 @@
     });
     $('#org-reset').addEventListener('click', async () => {
       const ok = await modal('<h2>¿Borrar la partida?</h2><p>Se borra el avance de la familia en ESTE teléfono.</p>', { botones: [{ txt: 'Cancelar', valor: false }, { txt: 'Borrar', valor: true, clase: 'peligro' }] });
-      if (ok) { E = null; store.del('rgn-estado'); aviso('Partida borrada'); ir('#/'); }
+      if (ok) { E = null; store.del(CLAVE); aviso('Partida borrada'); ir('#/'); }
     });
   };
+
+  /* ---------------- MODO PRUEBA ---------------- */
+  vistas.prueba = async () => {
+    app.innerHTML = '';
+    if (!(await pidePin())) return ir('#/');
+    const c = cfg(), hecho = store.get('rgn-checklist', {});
+    const total = window.PRUEBA_LISTA.reduce((n, g) => n + g.pasos.length, 0), listos = Object.values(hecho).filter(Boolean).length;
+    app.innerHTML = `<h1 class="titulo-seccion">🧪 Modo prueba</h1>
+      <section class="pergamino">
+        <p>Aquí puedes jugar como cualquier familia <b>sin tarjetas</b>. Lo que hagas en modo prueba se guarda aparte y <b>no afecta</b> la partida real de este celular.</p>
+        <p>Mientras pruebas, abajo a la izquierda aparece el botón <b>🧪 Simular</b>: sirve para «escanear» la tarjeta correcta, una trampa, un regalo, la carta de Santa o el QR final, y para ver la respuesta de cada reto.</p>
+        <h2>Probar como…</h2>
+        <div class="lista-familias">${c.familias.map(f => `<button class="familia-btn" data-prueba="${f.id}" style="--fam:${f.color}"><span class="fam-icono">${iconoFam(f, 40)}</span><span><b>${esc(f.nombre)}</b><small>${f.agente ? 'con la Agente ' + esc(f.agente) : f.descifradora ? 'con la Descifradora ' + esc(f.descifradora) : 'Reto Experto de la familia'}${f.activa ? '' : ' · (aún no juega)'}</small></span></button>`).join('')}</div>
+        ${PRUEBA ? '<button class="btn" id="salir-prueba">Salir del modo prueba</button>' : ''}
+      </section>
+      <section class="pergamino">
+        <h2>Lista de verificación <small class="avance">${listos} de ${total}</small></h2>
+        ${window.PRUEBA_LISTA.map((g, gi) => `<h3 class="rol">${g.rol}</h3><ul class="checklist">${g.pasos.map((p, pi) => `<li><label><input type="checkbox" data-k="${gi}-${pi}" ${hecho[gi + '-' + pi] ? 'checked' : ''}> <span>${esc(p)}</span></label></li>`).join('')}</ul>`).join('')}
+        <div class="fila-botones"><a class="btn" href="#/imprimir/prueba">🖨️ Imprimir la lista</a><button class="btn" id="borrar-lista">Desmarcar todo</button></div>
+      </section>`;
+    $$('[data-prueba]').forEach(bt => bt.addEventListener('click', () => {
+      const f = famPorId(bt.dataset.prueba);
+      modoPrueba(true); store.del('rgn-prueba'); E = null;
+      nuevaPartida(datosSobre(f)); aviso('🧪 Modo prueba: familia ' + f.nombre);
+      bienvenida();
+    }));
+    $$('.checklist input').forEach(i => i.addEventListener('change', () => { const h = store.get('rgn-checklist', {}); h[i.dataset.k] = i.checked; store.set('rgn-checklist', h); const n = Object.values(h).filter(Boolean).length; $('.avance').textContent = `${n} de ${total}`; if (i.checked) sfx.clic(); }));
+    $('#borrar-lista').addEventListener('click', () => { store.del('rgn-checklist'); render(); });
+    const sp = $('#salir-prueba'); if (sp) sp.addEventListener('click', salirPrueba);
+  };
+  function salirPrueba() { store.del('rgn-prueba'); modoPrueba(false); aviso('Saliste del modo prueba'); ir('#/prueba'); }
+  function pintaBarraPrueba() {
+    let bp = $('#barra-prueba');
+    const ver = PRUEBA && !document.body.classList.contains('modo-imprimir');
+    if (!ver) { if (bp) bp.remove(); return; }
+    if (!bp) { bp = document.createElement('button'); bp.id = 'barra-prueba'; bp.className = 'barra-prueba'; document.body.appendChild(bp); bp.addEventListener('click', menuSimular); }
+    bp.innerHTML = `🧪 Simular<small>${E ? esc(E.fam.n) : 'prueba'}</small>`;
+  }
+  async function menuSimular() {
+    if (!E) return ir('#/prueba');
+    const f = E.fam, ops = [];
+    const L = k => J.lugares[f.r[k]];
+    if (congelados()) ops.push(['descongelar', '⏩ Quitar la congelada']);
+    if (E.fase === 'buscando') ops.push(['correcta', `✅ Escanear la tarjeta correcta (pista ${E.paso + 1}: ${L(E.paso).nombre})`]);
+    if (E.fase === 'reto') ops.push(['respuesta', '💡 Poner la respuesta del reto']);
+    if (E.verExperto && !E.experto) ops.push(['experto', '🔐 Poner la respuesta del Reto Experto']);
+    if (E.paso + 1 < f.r.length && !E.fin) ops.push(['adelantada', `⏭️ Escanear una tarjeta adelantada (${L(E.paso + 1).nombre})`]);
+    if (E.paso > 0) ops.push(['usada', '🔁 Escanear una tarjeta ya usada']);
+    ops.push(['otra', '🎨 Escanear una tarjeta de otra familia']);
+    if (E.trampas.length < J.trampasPorFamilia) ops.push(['trampa', '🪤 Escanear una pista falsa']);
+    const sig = J.regalosFalsos.find(g => !E.regalos.includes(g.id)); if (sig) ops.push(['regalo', `🎁 Abrir regalo sorpresa #${sig.id} (${sig.titulo})`]);
+    ops.push(['carta', '✉️ Carta de Santa para Ana Sofía'], ['cartaGaby', '✉️ Carta de Santa para Gaby'], ['cofre', '🔐 Escanear el QR final del cofre'], ['salir', '🚪 Salir del modo prueba']);
+    const v = await modal(`<h2>🧪 Simular</h2><p class="nota-prueba">Familia <b>${esc(f.n)}</b> · pista ${Math.min(E.paso + 1, f.r.length)} de ${f.r.length} · candado <b>${esc(f.c)}</b></p>
+      <div class="ops-prueba">${ops.map(([k, t]) => `<button class="btn" data-op="${k}">${esc(t)}</button>`).join('')}</div>`, { botones: [{ txt: 'Cerrar', valor: null }] });
+    void v;
+  }
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-op]'); if (!b) return;
+    const op = b.dataset.op, f = E && E.fam; if (!f) return;
+    const fondo = b.closest('.modal-fondo'); if (fondo) { fondo.classList.remove('visible'); setTimeout(() => fondo.remove(), 200); }
+    await new Promise(r => setTimeout(r, 220));
+    const otraFam = J.familias.find(x => x.id !== f.id);
+    switch (op) {
+      case 'descongelar': E.congelado = 0; guarda(); render(); break;
+      case 'correcta': procesar(cod.lugar(f.id, f.r[E.paso])); break;
+      case 'adelantada': procesar(cod.lugar(f.id, f.r[E.paso + 1])); break;
+      case 'usada': procesar(cod.lugar(f.id, f.r[E.paso - 1])); break;
+      case 'otra': procesar(cod.lugar(otraFam.id, f.r[0])); break;
+      case 'trampa': procesar(cod.trampa(f.id, E.trampas.length + 1)); break;
+      case 'regalo': { const g = J.regalosFalsos.find(x => !E.regalos.includes(x.id)); procesar(cod.regalo(g.id)); break; }
+      case 'carta': procesar(cod.carta()); break;
+      case 'cartaGaby': procesar(cod.cartaGaby()); break;
+      case 'cofre': procesar(cod.cofre()); break;
+      case 'salir': salirPrueba(); break;
+      case 'respuesta': { await ir('#/juego'); setTimeout(() => { const i = $('#respuesta'); if (i) { i.value = retoDelPaso(E.paso).respuestas[0]; i.focus(); aviso('Respuesta puesta: toca «Responder»'); } }, 150); break; }
+      case 'experto': { const i = $('#resp-experto'); if (i) { i.value = retoExperto().respuestas[0]; i.focus(); aviso('Respuesta puesta: toca «Responder»'); } break; }
+    }
+  });
 
   /* ---------------- enrutador ---------------- */
   function ir(h) { if (location.hash === h) render(); else location.hash = h; }
@@ -760,8 +850,10 @@
     if (partes[0] === 'q' && partes[1]) { history.replaceState(null, '', E ? '#/juego' : '#/'); return procesar(partes[1].toUpperCase()); }
     if (partes[0] === 's' && partes[1]) { history.replaceState(null, '', '#/'); return unirseConSobre(partes[1]); }
     if (partes[0] === 'imprimir') { document.body.classList.add('modo-imprimir'); return window.IMPRIMIR && window.IMPRIMIR.render(partes[1] || 'guia', app); }
-    const v = { '': 'inicio', historia: 'historia', unirse: 'unirse', juego: 'juego', kit: 'kit', final: 'final', org: 'org' }[partes[0] || ''] || 'inicio';
-    vistas[v](partes[1]);
+    const v = { '': 'inicio', historia: 'historia', unirse: 'unirse', juego: 'juego', kit: 'kit', final: 'final', org: 'org', prueba: 'prueba' }[partes[0] || ''] || 'inicio';
+    const pr = vistas[v](partes[1]);
+    pintaBarraPrueba();
+    if (pr && pr.then) pr.then(pintaBarraPrueba);
     app.focus({ preventScroll: true });
   }
   $('#btn-atras').addEventListener('click', () => { if (history.length > 1) history.back(); else ir('#/'); });

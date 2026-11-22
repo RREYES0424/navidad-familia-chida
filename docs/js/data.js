@@ -6,7 +6,7 @@
 window.JUEGO = {
   titulo: 'El Gran Robo de Navidad',
   villano: 'Tilín',
-  agente: 'Ana Sofía',            // la Agente Especial de Santa (familia Reyes Martínez)
+  agente: 'Ana Sofía',            // la Agente Especial de Santa (familia Reyes Ramírez)
   descifradora: 'Gaby',           // la Descifradora Oficial de Santa (familia Reyes Flores)
   pinOrganizador: '4826',         // PIN para entrar al panel del organizador
   baseUrlPorDefecto: 'https://rreyes0424.github.io/navidad-familia-chida/',
@@ -19,7 +19,7 @@ window.JUEGO = {
      color: color de sus tarjetas · codigo: combinación de SU candado (4 dígitos)
      agente: si en la familia hay un/a peque con misiones especiales            */
   familias: [
-    { id: 'rm', nombre: 'Reyes Martínez', color: '#d7263d', colorNombre: 'Roja',   icono: 'estrella', codigo: '3815', agente: 'Ana Sofía', activa: true,  offset: 0 },
+    { id: 'rm', nombre: 'Reyes Ramírez', color: '#d7263d', colorNombre: 'Roja',   icono: 'estrella', codigo: '3815', agente: 'Ana Sofía', activa: true,  offset: 0 },
     { id: 'rf', nombre: 'Reyes Flores',   color: '#1b998b', colorNombre: 'Verde',  icono: 'arbol',    codigo: '7264', descifradora: 'Gaby', activa: true,  offset: 2 },
     { id: 'af', nombre: 'Alvarado Flores',color: '#e0a100', colorNombre: 'Dorada', icono: 'campana',  codigo: '5490', activa: true,  offset: 4 },
     { id: 'fx', nombre: 'Familia Invitada', color: '#3a6ea5', colorNombre: 'Azul', icono: 'copo',     codigo: '1736', activa: false, offset: 6 }
@@ -52,7 +52,7 @@ window.JUEGO = {
       emoji: '📦 〰️ 🍿 ⏱️',
       poema: 'Tengo una ventanita y un plato que da vueltas,\ncaliento el café y las palomitas sueltas.\nCuando termino canto: «¡bip, bip, bip!»…\nábranme la puerta: la pista está aquí.',
       pista1: 'Calienta la comida en segundos y hace «bip».' },
-    lavadora: { nombre: 'Lavadora', zona: 'Patio / cuarto de lavado', palabra: 'LAVADORA',
+    lavadora: { nombre: 'Lavadora', zona: 'Patio o lavado', palabra: 'LAVADORA',
       escondite: 'Pegada por dentro de la TAPA de la lavadora (o adentro, si está vacía).',
       detalle: 'bajo su tapa',
       emoji: '👕 🫧 🌀 💦',
@@ -76,7 +76,7 @@ window.JUEGO = {
       emoji: '🪴 💧 ☀️',
       poema: 'Vivo en el patio, me encanta el sol,\ntengo tierra en la panza y una planta en flor.\nSi me riegan, crezco; si no, me pongo triste…\nlevántenme poquito: ¡ahí está lo que no viste!',
       pista1: 'Está en el patio y tiene una planta.' },
-    tendedero: { nombre: 'Tendedero', zona: 'Patio / azotea', palabra: 'TENDEDERO',
+    tendedero: { nombre: 'Tendedero', zona: 'Patio', palabra: 'TENDEDERO',
       escondite: 'Colgada con una pinza de ropa en el tendedero.',
       detalle: 'colgada con una pinza',
       emoji: '👕 👖 🧦 ☀️',
@@ -106,7 +106,7 @@ window.JUEGO = {
       emoji: '🧼 🪣 👕 💧',
       poema: 'Soy de cemento y tengo una pileta de agua fría,\naquí se tallaba la ropa a mano todo el día.\nTengo una tabla con rayitas para restregar…\nbusquen debajo de mí, sin mojarse al buscar.',
       pista1: 'Es de cemento y sirve para tallar ropa a mano.' },
-    tapete: { nombre: 'Tapete de la puerta', zona: 'Entrada principal', palabra: 'TAPETE',
+    tapete: { nombre: 'Tapete de la puerta', zona: 'Entrada', palabra: 'TAPETE',
       escondite: 'Debajo del tapete de la puerta principal.',
       detalle: 'debajo de él, en la entrada principal',
       emoji: '🚪 👣 🏠 👋',
@@ -118,7 +118,7 @@ window.JUEGO = {
       emoji: '🛏️ 😴 💤 🌙',
       poema: 'Cada noche me abrazan y me cuentan sus sueños,\nsoy suave y esponjosa, la favorita de los pequeños.\nMe apachurran la cara cuando quieren dormir…\nbusquen debajo de mí, ¡pero no se vayan a dormir!',
       pista1: 'Está en una cama y es suavecita.' },
-    cereal: { nombre: 'Caja de cereal', zona: 'Cocina / alacena', palabra: 'CEREAL',
+    cereal: { nombre: 'Caja de cereal', zona: 'Cocina', palabra: 'CEREAL',
       escondite: 'Dentro de una caja de cereal en la alacena (en una bolsita).',
       detalle: 'dentro de la caja, en la alacena',
       emoji: '🥣 🥛 🌽 📦',
@@ -130,7 +130,7 @@ window.JUEGO = {
       emoji: '💧 🫙 🥤',
       poema: 'Soy grandote, transparente y lleno de agua,\ncuando me cambian hago «glu, glu» y todos se aguantan.\nEstoy en la cocina para quitarles la sed…\nbusquen pegadito a mí: ¡ahí lo van a ver!',
       pista1: 'Tiene agua para tomar y hace «glu, glu».' },
-    escoba: { nombre: 'Escoba', zona: 'Patio / cocina', palabra: 'ESCOBA',
+    escoba: { nombre: 'Escoba', zona: 'Patio', palabra: 'ESCOBA',
       escondite: 'Amarrada con un listón al palo de la escoba.',
       detalle: 'amarrada a su palo',
       emoji: '🧹 ✨ 🧹',
@@ -269,7 +269,7 @@ window.CUENTO = [
   { img: '02-tilin', texto: 'Entre todos ellos había uno muy especial: Tilín. Era chiquito, tenía orejas puntiagudas y un gorro verde con un cascabel en la punta que sonaba «tilín, tilín» cada vez que daba un paso. Por eso todos lo llamaban así.' },
   { img: '03-bromas', texto: 'A Tilín le encantaban las bromas. Le pintaba bigotes a los osos de peluche, escondía los moños de los regalos y una vez… ¡cambió el azúcar de las galletas por sal! Los demás duendes no se reían tanto como él.' },
   { img: '04-santa', texto: 'Un día, Santa se cansó: —¡Tilín! Esta Navidad te quedas castigado en el taller.\nTilín se puso rojo como una nochebuena y, echando humo por las orejas, gritó: —¿Castigado? ¡Ya verán! Si yo no tengo Navidad… ¡nadie la tendrá!' },
-  { img: '05-vuelo', texto: 'Esa misma noche, Tilín se subió a un trineo viejito y voló sobre montañas y pueblos hasta llegar a México, a la casa donde las familias Reyes Martínez, Reyes Flores y Alvarado Flores se reúnen cada año para celebrar la Navidad.' },
+  { img: '05-vuelo', texto: 'Esa misma noche, Tilín se subió a un trineo viejito y voló sobre montañas y pueblos hasta llegar a México, a la casa donde las familias Reyes Ramírez, Reyes Flores y Alvarado Flores se reúnen cada año para celebrar la Navidad.' },
   { img: '06-robo', texto: 'Para que nadie lo escuchara, le metió un algodón a su cascabel y entró de puntitas. Uno por uno, metió todos los regalos en su costal… ¡y hasta se comió las galletas que estaban en la mesa!' },
   { img: '07-cofre', texto: 'Luego guardó los regalos en su Cofre Encantado y le puso un candado por cada familia. Sólo quien descubra los números secretos podrá abrirlos.' },
   { img: '08-pistas', texto: 'Pero Tilín es muy presumido y no aguantó las ganas de retar a las familias: escondió pistas secretas por toda la casa… y también pistas falsas y regalos de mentira para engañarlos. —¡Je, je, je! ¡A ver si pueden!' },
@@ -286,7 +286,7 @@ window.GUION = [
   { voz: 'Santa', texto: '¡Tilín! Esta Navidad te quedas castigado en el taller.' },
   { voz: 'Narradora', texto: 'Tilín se puso rojo como una nochebuena.' },
   { voz: 'Tilín', texto: '¿Castigado? ¡Ya verán! Si yo no tengo Navidad… ¡nadie la tendrá!' },
-  { voz: 'Narradora', texto: 'Esa misma noche, Tilín se subió a un trineo viejito y voló, y voló, hasta México… hasta la casa donde las familias Reyes Martínez, Reyes Flores y Alvarado Flores se reúnen para celebrar la Navidad.' },
+  { voz: 'Narradora', texto: 'Esa misma noche, Tilín se subió a un trineo viejito y voló, y voló, hasta México… hasta la casa donde las familias Reyes Ramírez, Reyes Flores y Alvarado Flores se reúnen para celebrar la Navidad.' },
   { voz: 'Narradora', texto: 'Para que nadie lo escuchara, le metió un algodón a su cascabel… y entró de puntitas. Uno por uno, metió todos los regalos en su costal. ¡Y hasta se comió las galletas!' },
   { voz: 'Narradora', texto: 'Después, encerró los regalos en su Cofre Encantado y le puso un candado por cada familia, para que nadie lo pudiera abrir.' },
   { voz: 'Narradora', texto: 'Pero Tilín es tan presumido, que no se aguantó las ganas de retarlos: escondió pistas secretas por toda la casa… y también pistas falsas y regalos de mentira, para engañarlos.' },
@@ -299,4 +299,49 @@ window.GUION = [
   { voz: 'Final · Narradora', texto: 'Las familias, en lugar de enojarse, invitaron a Tilín a quedarse a la cena de Navidad.' },
   { voz: 'Final · Tilín', texto: '¿De verdad? ¡Gracias! Prometo portarme bien… bueno, casi siempre. ¡Je, je!' },
   { voz: 'Final · Narradora', texto: 'Y así, el duende más travieso del Polo Norte aprendió que el mejor regalo de la Navidad es estar juntos. ¡Feliz Navidad, familias!' }
+];
+
+/* ---------------- PLAN DE PRUEBA (modo prueba del organizador) ---------------- */
+window.PRUEBA_LISTA = [
+  { rol: '🔑 Organizador', pasos: [
+    'Abrir la app en tu celular y en una computadora.',
+    'Entrar al Panel del organizador con el PIN.',
+    'Revisar nombres de las familias, códigos de los candados, Agente y Descifradora.',
+    'Revisar que los 7 escondites existen en la casa (si no, cambiarlos en el panel).',
+    'Programar cada candado real con su código y probar que abre.',
+    'Ver el video de la historia completo, con sonido, en la tele que se va a usar.',
+    'Escuchar los audios de Santa para Ana Sofía y para Gaby.',
+    'Imprimir una hoja de prueba (tamaño carta, escala 100%) y revisar que se lea bien.'
+  ] },
+  { rol: '👪 Cada familia (repetir con todas)', pasos: [
+    'Entrar con «Probar como familia…» y leer la bienvenida de Tilín.',
+    'Pasar las 7 pistas con «Simular → tarjeta correcta» y resolver los 7 retos.',
+    'Probar una respuesta equivocada y usar un comodín.',
+    'Confirmar que salen los 4 números y que son los del candado real.',
+    'Simular una tarjeta adelantada, una ya usada y una de otra familia.',
+    'Simular una pista falsa (60 segundos congelados) y un regalo sorpresa.',
+    'Al terminar, tocar «Ya abrimos nuestro candado».'
+  ] },
+  { rol: '⭐ Agente Ana Sofía (Reyes Ramírez)', pasos: [
+    'Ver y escuchar sus misiones (botón 🔊 Escuchar).',
+    'Cumplir 4 misiones: aparece el bono de +1 comodín.',
+    'Simular la carta de Santa de Ana Sofía: se escucha el audio.',
+    'La Llave Dorada abre el candado de llave del cofre.'
+  ] },
+  { rol: '🔐 Descifradora Gaby (Reyes Flores)', pasos: [
+    'Al iniciar aparece la presentación de Descifradora Oficial.',
+    'Después de la pista 3 se abre su Reto Experto; al resolverlo ganan +1 comodín.',
+    'Simular la carta de Santa de Gaby: se escucha el audio.'
+  ] },
+  { rol: '🎬 Final', pasos: [
+    'Simular el QR final del cofre: se ve el video final y el resumen de la familia.'
+  ] },
+  { rol: '📱 Celulares reales con tarjetas impresas', pasos: [
+    'iPhone: escanear un Sobre de Misión con la cámara normal → abre la app.',
+    'iPhone: botón «Escanear tarjeta» → la cámara lee una tarjeta impresa.',
+    'Android: lo mismo (sobre con la cámara y tarjeta con el botón).',
+    'Escribir a mano el código de 4 letras de una tarjeta.',
+    'Cerrar el navegador y volver a abrir: el avance sigue ahí.',
+    'Al terminar, borrar la partida de cada celular (Panel → Borrar partida).'
+  ] }
 ];
